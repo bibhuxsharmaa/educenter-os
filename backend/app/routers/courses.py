@@ -40,3 +40,44 @@ def get_course(course_id: int, db: Session = Depends(get_db)):
         )
 
     return course
+
+
+@router.put("/{course_id}", response_model=schemas.CourseResponse)
+def update_course(
+    course_id: int,
+    updated_course: schemas.CourseUpdate,
+    db: Session = Depends(get_db),
+):
+    course = db.query(models.Course).filter(models.Course.id == course_id).first()
+
+    if not course:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Course not found",
+        )
+
+    update_data = updated_course.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(course, key, value)
+
+    db.commit()
+    db.refresh(course)
+
+    return course
+
+
+@router.delete("/{course_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_course(course_id: int, db: Session = Depends(get_db)):
+    course = db.query(models.Course).filter(models.Course.id == course_id).first()
+
+    if not course:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Course not found",
+        )
+
+    db.delete(course)
+    db.commit()
+
+    return None

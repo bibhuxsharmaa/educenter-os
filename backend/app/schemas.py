@@ -49,6 +49,14 @@ class CourseCreate(CourseBase):
     pass
 
 
+class CourseUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    monthly_fee: Optional[Decimal] = None
+    duration_months: Optional[int] = None
+    status: Optional[str] = None
+
+
 class CourseResponse(CourseBase):
     id: int
     created_at: datetime
