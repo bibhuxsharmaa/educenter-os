@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app.database import Base, engine, get_db
+from app.routers import students
 
 Base.metadata.create_all(bind=engine)
 
@@ -12,6 +13,8 @@ app = FastAPI(
     description="Backend API for EduCenter OS coaching center management platform.",
     version="0.1.0",
 )
+
+app.include_router(students.router)
 
 
 @app.get("/")
