@@ -1,0 +1,51 @@
+services:
+  backend:
+    image: lakshaywalia666/educenter-os-backend:latest
+    container_name: educenter-backend
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_DB: educenter
+      POSTGRES_USER: educenter_user
+      POSTGRES_PASSWORD: educenter_password
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    depends_on:
+      - postgres
+    networks:
+      - app_net
+      - database_net
+
+  frontend:
+    image: lakshaywalia666/educenter-os-frontend:latest
+    container_name: educenter-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app_net
+
+  postgres:
+    image: postgres:16
+    container_name: educenter-postgres
+    environment:
+      POSTGRES_DB: educenter
+      POSTGRES_USER: educenter_user
+      POSTGRES_PASSWORD: educenter_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - database_net
+
+networks:
+  app_net:
+    driver: bridge
+
+  database_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
