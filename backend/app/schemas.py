@@ -78,6 +78,15 @@ class BatchCreate(BatchBase):
     pass
 
 
+class BatchUpdate(BaseModel):
+    name: Optional[str] = None
+    course_id: Optional[int] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    days: Optional[str] = None
+    status: Optional[str] = None
+
+
 class BatchResponse(BatchBase):
     id: int
     created_at: datetime
