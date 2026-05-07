@@ -1,4 +1,14 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import (
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -76,3 +86,25 @@ class Enrollment(Base):
     student = relationship("Student", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")
     batch = relationship("Batch", back_populates="enrollments")
+    attendance_records = relationship("Attendance", back_populates="enrollment")
+
+
+class Attendance(Base):
+    __tablename__ = "attendance"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "enrollment_id",
+            "attendance_date",
+            name="unique_enrollment_attendance_date",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    enrollment_id = Column(Integer, ForeignKey("enrollments.id"), nullable=False)
+    attendance_date = Column(Date, nullable=False)
+    status = Column(String(20), nullable=False)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    enrollment = relationship("Enrollment", back_populates="attendance_records")

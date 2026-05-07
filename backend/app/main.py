@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import Base, engine, get_db
-from app.routers import batches, courses, dashboard, enrollments, students
+from app.routers import attendance, batches, courses, dashboard, enrollments, students
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,6 +29,7 @@ app.include_router(students.router)
 app.include_router(courses.router)
 app.include_router(batches.router)
 app.include_router(enrollments.router)
+app.include_router(attendance.router)
 app.include_router(dashboard.router)
 
 

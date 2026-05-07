@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Optional
 
@@ -133,4 +133,40 @@ class EnrollmentDetailResponse(BaseModel):
     batch_name: str
     monthly_fee: Decimal
     status: str
+    created_at: datetime
+
+
+class AttendanceBase(BaseModel):
+    enrollment_id: int
+    attendance_date: date
+    status: str
+    notes: Optional[str] = None
+
+
+class AttendanceCreate(AttendanceBase):
+    pass
+
+
+class AttendanceUpdate(BaseModel):
+    status: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class AttendanceResponse(AttendanceBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class AttendanceDetailResponse(BaseModel):
+    id: int
+    enrollment_id: int
+    attendance_date: date
+    status: str
+    notes: Optional[str] = None
+    student_name: str
+    course_name: str
+    batch_name: str
     created_at: datetime
