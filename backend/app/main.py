@@ -1,4 +1,11 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from app import models
+from app.database import Base, engine, get_db
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="EduCenter OS API",
@@ -21,4 +28,13 @@ def health_check():
     return {
         "status": "ok",
         "service": "educenter-backend",
+    }
+
+
+@app.get("/db-health")
+def database_health_check(db: Session = Depends(get_db)):
+    db.execute(text("SELECT 1"))
+    return {
+        "status": "ok",
+        "database": "connected",
     }
