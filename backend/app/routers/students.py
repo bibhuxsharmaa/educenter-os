@@ -40,3 +40,44 @@ def get_student(student_id: int, db: Session = Depends(get_db)):
         )
 
     return student
+
+
+@router.put("/{student_id}", response_model=schemas.StudentResponse)
+def update_student(
+    student_id: int,
+    updated_student: schemas.StudentUpdate,
+    db: Session = Depends(get_db),
+):
+    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not found",
+        )
+
+    update_data = updated_student.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(student, key, value)
+
+    db.commit()
+    db.refresh(student)
+
+    return student
+
+
+@router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_student(student_id: int, db: Session = Depends(get_db)):
+    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not found",
+        )
+
+    db.delete(student)
+    db.commit()
+
+    return None
