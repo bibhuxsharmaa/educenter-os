@@ -28,6 +28,8 @@ class Student(Base):
     status = Column(String(20), default="active")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+    enrollments = relationship("Enrollment", back_populates="student")
+
 
 class Course(Base):
     __tablename__ = "courses"
@@ -41,6 +43,7 @@ class Course(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     batches = relationship("Batch", back_populates="course")
+    enrollments = relationship("Enrollment", back_populates="course")
 
 
 class Batch(Base):
@@ -56,3 +59,20 @@ class Batch(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     course = relationship("Course", back_populates="batches")
+    enrollments = relationship("Enrollment", back_populates="batch")
+
+
+class Enrollment(Base):
+    __tablename__ = "enrollments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=False)
+    batch_id = Column(Integer, ForeignKey("batches.id"), nullable=False)
+    monthly_fee = Column(Numeric(10, 2), nullable=False, default=0)
+    status = Column(String(20), default="active")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    student = relationship("Student", back_populates="enrollments")
+    course = relationship("Course", back_populates="enrollments")
+    batch = relationship("Batch", back_populates="enrollments")

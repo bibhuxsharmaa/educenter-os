@@ -93,3 +93,44 @@ class BatchResponse(BatchBase):
 
     class Config:
         from_attributes = True
+
+
+class EnrollmentBase(BaseModel):
+    student_id: int
+    course_id: int
+    batch_id: int
+    monthly_fee: Decimal = Decimal("0.00")
+    status: str = "active"
+
+
+class EnrollmentCreate(EnrollmentBase):
+    pass
+
+
+class EnrollmentUpdate(BaseModel):
+    student_id: Optional[int] = None
+    course_id: Optional[int] = None
+    batch_id: Optional[int] = None
+    monthly_fee: Optional[Decimal] = None
+    status: Optional[str] = None
+
+
+class EnrollmentResponse(EnrollmentBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class EnrollmentDetailResponse(BaseModel):
+    id: int
+    student_id: int
+    student_name: str
+    course_id: int
+    course_name: str
+    batch_id: int
+    batch_name: str
+    monthly_fee: Decimal
+    status: str
+    created_at: datetime

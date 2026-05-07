@@ -51,8 +51,8 @@ export default function Home() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900">EduCenter OS</h1>
           <p className="mt-2 text-gray-600">
-            Manage students, courses, batches, attendance, fees, and
-            communication from one place.
+            Manage students, courses, batches, enrollments, attendance, fees,
+            and communication from one place.
           </p>
         </div>
 
@@ -101,8 +101,8 @@ export default function Home() {
 
           <p className="mt-2 text-gray-600">
             This dashboard is now connected to the FastAPI backend and
-            PostgreSQL database. You can manage students, courses, and batches
-            from here.
+            PostgreSQL database. You can manage students, courses, batches, and
+            enrollments from here.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-4">
@@ -125,6 +125,13 @@ export default function Home() {
               className="rounded-lg border border-gray-300 px-5 py-3 text-gray-800"
             >
               Manage Batches
+            </Link>
+
+            <Link
+              href="/enrollments"
+              className="rounded-lg border border-gray-300 px-5 py-3 text-gray-800"
+            >
+              Manage Enrollments
             </Link>
 
             <a
