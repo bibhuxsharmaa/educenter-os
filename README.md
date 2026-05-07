@@ -1,856 +1,959 @@
-# EduCenter OS
+# 🎓 EduCenter OS — Premium Cloud-Native Education Management Platform
 
-EduCenter OS is a full-stack institute/coaching center management system built with a real DevOps workflow.
+> A modern, full-stack education/coaching institute management system deployed on a real homelab Kubernetes cluster with GitOps, monitoring, CI/CD tooling, and a premium futuristic UI.
 
-It includes student management, courses, batches, enrollments, fees, attendance, dashboard analytics, message logs, WhatsApp message links, Docker, GitHub Actions CI/CD, Docker Hub images, and Kubernetes manifests for home server deployment.
-
----
-
-## Project Status
-
-| Module | Status |
-|---|---|
-| Students | Complete |
-| Courses | Complete |
-| Batches | Complete |
-| Enrollments | Complete |
-| Fees | Complete |
-| Attendance | Complete |
-| Dashboard | Complete |
-| Messages | Complete |
-| WhatsApp Link | Complete |
-| Docker Compose | Complete |
-| Docker Hub Images | Complete |
-| GitHub Actions CI/CD | Complete |
-| Kubernetes Manifests | Added |
-| Home Server Scripts | Added |
-| Jenkins | Planned |
-| Argo CD | Planned |
-| Monitoring | Planned |
+![EduCenter OS Premium Dashboard](docs/screenshots/01-educenter-dashboard-premium.png)
 
 ---
 
-## Tech Stack
+## 🚀 Project Overview
 
-### Frontend
+**EduCenter OS** is a premium education management platform built for coaching centers, tuition centers, training institutes, and small educational businesses.
+
+It provides a complete system for managing:
+
+- 👨‍🎓 Students
+- 📚 Courses
+- 🗓️ Batches
+- 🧾 Enrollments
+- 💸 Fees
+- ✅ Attendance
+- 💬 Messages
+- 📊 Dashboard analytics
+- ☸️ Kubernetes deployment
+- 🔁 GitOps with Argo CD
+- 📈 Monitoring with Prometheus
+- 📊 Dashboards with Grafana
+- 🏗️ Jenkins for CI/CD experimentation
+
+This is not only a web app. It is a **complete DevOps homelab project** showing full-stack development, Docker, Kubernetes, GitOps, monitoring, and CI/CD infrastructure.
+
+---
+
+## ✨ Live Homelab URLs
+
+> These URLs work inside the local network where the homelab server is running.
+
+| Service | URL | Purpose |
+|---|---|---|
+| 🎓 EduCenter Frontend | `http://192.168.1.18:30080` | Main web app |
+| ⚙️ EduCenter Backend | `http://192.168.1.18:30081` | FastAPI backend |
+| 🔁 Argo CD | `https://192.168.1.18:30083` | GitOps dashboard |
+| 📊 Grafana | `http://192.168.1.18:30084` | Monitoring dashboards |
+| 📈 Prometheus | `http://192.168.1.18:30085` | Metrics and queries |
+| 🏗️ Jenkins | `http://192.168.1.18:30086` | CI/CD server |
+
+---
+
+## 🧠 Why This Project Matters
+
+This project demonstrates real-world DevOps and cloud-native engineering skills:
+
+- ✅ Full-stack app development
+- ✅ API-first backend design
+- ✅ PostgreSQL database integration
+- ✅ Docker image builds
+- ✅ Docker Hub image publishing
+- ✅ Kubernetes manifests
+- ✅ NodePort service exposure
+- ✅ Homelab server deployment
+- ✅ GitHub source control
+- ✅ Argo CD GitOps sync
+- ✅ Prometheus metrics collection
+- ✅ Grafana Kubernetes dashboards
+- ✅ Jenkins installation on Kubernetes
+- ✅ Production-style documentation
+
+This project is useful for:
+
+- DevOps portfolio
+- Cloud Engineer portfolio
+- Kubernetes practice
+- Homelab demonstration
+- GitOps learning
+- Monitoring learning
+- Full-stack SaaS prototype
+
+---
+
+## 🧱 Tech Stack
+
+### 🎨 Frontend
 
 - Next.js
 - React
 - TypeScript
-- CSS inline styling / basic UI layout
+- Custom premium CSS
+- Lucide React icons
+- Dockerized Node.js frontend
 
-### Backend
+### ⚙️ Backend
 
 - FastAPI
+- Python
 - SQLAlchemy
-- Pydantic
-- Uvicorn
+- Pydantic schemas
+- PostgreSQL database
 
-### Database
-
-- PostgreSQL 16
-
-### DevOps
+### ☸️ Infrastructure / DevOps
 
 - Docker
-- Docker Compose
 - Docker Hub
-- GitHub Actions
-- Kubernetes
-- K3s for home server deployment
+- Kubernetes / K3s
+- Helm
+- Argo CD
+- Prometheus
+- Grafana
+- Jenkins
+- GitHub
+- Ubuntu homelab server
 
 ---
 
-## Repository
+## 🏗️ High-Level Architecture
 
-```text
-https://github.com/lakshaywalia666/educenter-os
+```mermaid
+flowchart LR
+    User[👤 User Browser] --> Frontend[🎨 Next.js Frontend<br/>NodePort 30080]
+    Frontend --> Backend[⚙️ FastAPI Backend<br/>NodePort 30081]
+    Backend --> DB[(🐘 PostgreSQL<br/>ClusterIP 5432)]
+
+    GitHub[🐙 GitHub Repo] --> ArgoCD[🔁 Argo CD<br/>NodePort 30083]
+    ArgoCD --> K8s[☸️ K3s Kubernetes Cluster]
+
+    K8s --> Frontend
+    K8s --> Backend
+    K8s --> DB
+
+    Prometheus[📈 Prometheus<br/>NodePort 30085] --> K8s
+    Grafana[📊 Grafana<br/>NodePort 30084] --> Prometheus
+    Jenkins[🏗️ Jenkins<br/>NodePort 30086] --> GitHub
 ```
 
 ---
 
-## Docker Hub Images
+## ☸️ Kubernetes Namespace Layout
 
-```text
-lakshaywalia666/educenter-os-backend:latest
-lakshaywalia666/educenter-os-frontend:latest
-postgres:16
+```mermaid
+flowchart TB
+    Cluster[☸️ K3s Homelab Cluster]
+
+    Cluster --> Edu[🎓 Namespace: educenter-os]
+    Edu --> FE[frontend deployment]
+    Edu --> BE[backend deployment]
+    Edu --> PG[postgres deployment]
+    Edu --> PVC[postgres-pvc]
+    Edu --> Secret[postgres-secret]
+
+    Cluster --> Argo[🔁 Namespace: argocd]
+    Argo --> ArgoServer[argocd-server]
+    Argo --> ArgoRepo[argocd-repo-server]
+    Argo --> ArgoController[argocd-application-controller]
+
+    Cluster --> Mon[📊 Namespace: monitoring]
+    Mon --> Grafana[grafana]
+    Mon --> Prom[prometheus]
+    Mon --> Alert[alertmanager]
+    Mon --> NodeExporter[node-exporter]
+    Mon --> StateMetrics[kube-state-metrics]
+
+    Cluster --> JenkinsNS[🏗️ Namespace: jenkins]
+    JenkinsNS --> JenkinsPod[jenkins-0]
 ```
 
 ---
 
-## Project Structure
+## 🔁 GitOps Flow with Argo CD
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant GitHub as GitHub Repo
+    participant Argo as Argo CD
+    participant K8s as Kubernetes Cluster
+    participant App as EduCenter OS App
+
+    Dev->>GitHub: Push code or Kubernetes YAML
+    Argo->>GitHub: Watches branch main and path k8s/
+    Argo->>K8s: Syncs desired state
+    K8s->>App: Runs frontend, backend, postgres
+    Argo->>K8s: Self-heals drift if manual changes happen
+```
+
+Argo CD application source:
+
+```yaml
+source:
+  repoURL: https://github.com/lakshaywalia666/educenter-os.git
+  targetRevision: main
+  path: k8s
+destination:
+  namespace: educenter-os
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+```
+
+---
+
+## 📦 Repository Structure
 
 ```text
 educenter-os/
-  backend/
-    app/
-      routers/
-        students.py
-        courses.py
-        batches.py
-        enrollments.py
-        fees.py
-        attendance.py
-        messages.py
-        dashboard.py
-      main.py
-      models.py
-      schemas.py
-      database.py
-    Dockerfile
-    requirements.txt
-
-  frontend/
-    app/
-      students/
-      courses/
-      batches/
-      enrollments/
-      fees/
-      attendance/
-      messages/
-      page.tsx
-    Dockerfile
-    package.json
-
-  k8s/
-    namespace.yaml
-    postgres-secret.yaml
-    postgres-pvc.yaml
-    postgres-deployment.yaml
-    postgres-service.yaml
-    backend-deployment.yaml
-    backend-service.yaml
-    frontend-deployment.yaml
-    frontend-service.yaml
-
-  scripts/
-    install-k3s.sh
-    deploy-educenter.sh
-
-  .github/
-    workflows/
-      docker-build.yml
-
-  docker-compose.yml
-  docker-compose.prod.yml
-  README.md
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   └── routers/
+│   │       ├── students.py
+│   │       ├── courses.py
+│   │       ├── batches.py
+│   │       ├── enrollments.py
+│   │       ├── fees.py
+│   │       ├── attendance.py
+│   │       ├── messages.py
+│   │       └── dashboard.py
+│   └── Dockerfile
+│
+├── frontend/
+│   ├── app/
+│   │   ├── components/
+│   │   │   └── PremiumShell.tsx
+│   │   ├── page.tsx
+│   │   ├── students/page.tsx
+│   │   ├── courses/page.tsx
+│   │   ├── batches/page.tsx
+│   │   ├── enrollments/page.tsx
+│   │   ├── fees/page.tsx
+│   │   ├── attendance/page.tsx
+│   │   ├── messages/page.tsx
+│   │   └── globals.css
+│   └── Dockerfile
+│
+├── k8s/
+│   ├── namespace.yaml
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── frontend-deployment.yaml
+│   ├── frontend-service.yaml
+│   ├── postgres-deployment.yaml
+│   ├── postgres-service.yaml
+│   ├── postgres-secret.yaml
+│   └── postgres-pvc.yaml
+│
+├── argocd/
+│   └── educenter-os-app.yaml
+│
+├── docs/
+│   └── screenshots/
+│
+├── scripts/
+│   ├── install-k3s.sh
+│   ├── deploy-educenter.sh
+│   └── bootstrap-full-homelab.sh
+│
+├── docker-compose.yml
+├── docker-compose.prod.yml
+└── README.md
 ```
 
 ---
 
-## Features
+# 🖼️ Screenshots
 
-### Students
+## 🎛️ Premium Dashboard
 
-- Create students
-- View students
-- Update students
-- Delete students
-- Store parent details, phone, email, address, and status
+![EduCenter OS Premium Dashboard](docs/screenshots/01-educenter-dashboard-premium.png)
 
-### Courses
+## 👨‍🎓 Students Management
 
-- Create courses
-- View courses
-- Update courses
-- Delete courses
-- Store monthly fee and duration
+![Students Page](docs/screenshots/02-students-page-premium.png)
 
-### Batches
+## 📚 Courses Management
 
-- Create batches
-- Link batches to courses
-- Store start time, end time, days, and status
+![Courses Page](docs/screenshots/03-courses-page-premium.png)
 
-### Enrollments
+## 🗓️ Batches Management
 
-- Enroll students into course and batch
-- Store monthly fee
-- Track active/inactive enrollment
+![Batches Page](docs/screenshots/04-batches-page-premium.png)
 
-### Fees
+## 🧾 Enrollments Management
 
-- Monthly fee tracking
-- Mark fee as paid
-- Mark fee as pending
-- Fee summary
-- Student-wise fee status
-- Dashboard fee totals
+![Enrollments Page](docs/screenshots/05-enrollments-page-premium.png)
 
-### Attendance
+## 💸 Fees Management
 
-- Select batch
-- Select date
-- Mark students present
-- Mark students absent
-- Attendance summary
-- Student-wise attendance status
+![Fees Page](docs/screenshots/06-fees-page-premium.png)
 
-### Dashboard
+## ✅ Attendance Management
 
-Live dashboard showing:
+![Attendance Page](docs/screenshots/07-attendance-page-premium.png)
 
-- Total students
-- Active students
-- Total courses
-- Total batches
-- Total enrollments
-- Attendance present / absent / unmarked
-- Fee due / paid / pending
-- Message totals
+## 💬 Messages Module
 
-### Messages
-
-- Create message logs
-- Auto-generate message templates
-- Fee reminder template
-- Attendance warning template
-- Payment reminder template
-- Mark message as sent
-- Delete message
-- WhatsApp send link
-
-### WhatsApp Link
-
-The app can open WhatsApp Web with the message already filled.
-
-This is not automatic WhatsApp Cloud API sending yet. It opens WhatsApp and the user manually presses Send.
+![Messages Page](docs/screenshots/08-messages-page-premium.png)
 
 ---
 
-## Local Development
+# 🔁 Argo CD GitOps
 
-### 1. Clone Repository
+EduCenter OS is connected to Argo CD and synced from GitHub.
 
-```bash
-git clone https://github.com/lakshaywalia666/educenter-os.git
-cd educenter-os
+![Argo CD Application Healthy](docs/screenshots/09-argocd-application-healthy.png)
+
+Argo CD watches:
+
+```text
+Repository: https://github.com/lakshaywalia666/educenter-os.git
+Branch: main
+Path: k8s/
+Namespace: educenter-os
 ```
+
+Current behavior:
+
+- Argo CD watches GitHub
+- Any Kubernetes manifest change in `k8s/` gets synced
+- Auto-sync is enabled
+- Self-heal is enabled
+- Drift is automatically corrected
 
 ---
 
-## Run With Docker Compose - Local Build
+# 📊 Monitoring with Grafana and Prometheus
 
-This builds images from local source code.
+Grafana is installed through `kube-prometheus-stack` and connected to Prometheus.
 
-```bash
-docker compose up -d --build
-```
+![Grafana Kubernetes Cluster Dashboard](docs/screenshots/10-grafana-kubernetes-cluster.png)
 
-Check containers:
+## Prometheus
 
-```bash
-docker compose ps
-```
+Prometheus collects metrics from:
 
-Open frontend:
+- Kubernetes nodes
+- Pods
+- Services
+- kube-state-metrics
+- node-exporter
+- Kubernetes components
 
-```text
-http://localhost:3000
-```
-
-Open backend docs:
+Prometheus URL:
 
 ```text
-http://127.0.0.1:8000/docs
+http://192.168.1.18:30085
 ```
 
-Stop containers:
+Useful Prometheus query:
 
-```bash
-docker compose down
+```promql
+up
 ```
+
+Targets page:
+
+```text
+Status → Targets
+```
+
+## Grafana
+
+Grafana visualizes Prometheus metrics.
+
+Grafana URL:
+
+```text
+http://192.168.1.18:30084
+```
+
+Recommended dashboards:
+
+- Kubernetes / Compute Resources / Cluster
+- Kubernetes / Compute Resources / Namespace
+- Kubernetes / Compute Resources / Pod
+- Node Exporter / Nodes
+- Prometheus Overview
 
 ---
 
-## Run With Docker Hub Images
+# 🚀 Fresh Server Setup
 
-This uses already pushed Docker Hub images.
+This repository includes a full bootstrap script for a fresh Ubuntu homelab server.
 
-```bash
-docker compose -f docker-compose.prod.yml up -d
-```
+## ✅ What the Script Installs
 
-Check containers:
+The script installs and configures:
 
-```bash
-docker compose -f docker-compose.prod.yml ps
-```
+- Docker
+- K3s Kubernetes
+- kubectl config
+- Helm
+- EduCenter OS app
+- Argo CD
+- Prometheus
+- Grafana
+- Jenkins
 
-Open frontend:
+## 🖥️ Fresh Server Requirements
+
+| Resource | Minimum |
+|---|---|
+| OS | Ubuntu 22.04 / 24.04 |
+| CPU | 2 cores+ |
+| RAM | 8 GB minimum, 16 GB recommended |
+| Disk | 50 GB+ |
+| Network | Static LAN IP recommended |
+
+Current tested homelab:
 
 ```text
-http://localhost:3000
-```
-
-Open backend docs:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-Stop containers:
-
-```bash
-docker compose -f docker-compose.prod.yml down
-```
-
-Pull latest images:
-
-```bash
-docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d
+Server IP: 192.168.1.18
+User: lw
+OS: Ubuntu 24.04
+Kubernetes: K3s
 ```
 
 ---
 
-## Backend API
+## ⚡ One-Command Full Homelab Setup
 
-Base URL:
-
-```text
-http://127.0.0.1:8000
-```
-
-Swagger docs:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-Main API groups:
-
-```text
-/students
-/courses
-/batches
-/enrollments
-/fees
-/attendance
-/messages
-/dashboard
-```
-
-Health endpoints:
-
-```text
-GET /
-GET /health
-GET /db-health
-```
-
----
-
-## Important API Endpoints
-
-### Dashboard
-
-```text
-GET /dashboard/stats
-```
-
-### Fees
-
-```text
-GET  /fees/
-GET  /fees/details
-GET  /fees/monthly-students
-GET  /fees/summary
-POST /fees/
-PUT  /fees/{fee_payment_id}
-DELETE /fees/{fee_payment_id}
-```
-
-### Attendance
-
-```text
-GET  /attendance/
-GET  /attendance/details
-GET  /attendance/batch-students
-GET  /attendance/summary
-POST /attendance/
-PUT  /attendance/{attendance_id}
-DELETE /attendance/{attendance_id}
-```
-
-### Messages
-
-```text
-GET  /messages/
-GET  /messages/details
-POST /messages/
-PUT  /messages/{message_id}
-DELETE /messages/{message_id}
-POST /messages/{message_id}/mark-sent
-```
-
----
-
-## GitHub Actions CI/CD
-
-GitHub Actions workflow:
-
-```text
-.github/workflows/docker-build.yml
-```
-
-On every push to `main`, GitHub Actions builds and pushes:
-
-```text
-lakshaywalia666/educenter-os-backend:latest
-lakshaywalia666/educenter-os-frontend:latest
-```
-
-Required GitHub repository secrets:
-
-```text
-DOCKER_USERNAME
-DOCKER_PASSWORD
-```
-
-`DOCKER_PASSWORD` should be a Docker Hub access token.
-
----
-
-## Manual Docker Build and Push
-
-Login:
+On a fresh Ubuntu server:
 
 ```bash
-docker login
-```
-
-Build backend:
-
-```bash
-docker build -t lakshaywalia666/educenter-os-backend:latest ./backend
-```
-
-Build frontend:
-
-```bash
-docker build -t lakshaywalia666/educenter-os-frontend:latest ./frontend
-```
-
-Push backend:
-
-```bash
-docker push lakshaywalia666/educenter-os-backend:latest
-```
-
-Push frontend:
-
-```bash
-docker push lakshaywalia666/educenter-os-frontend:latest
-```
-
-Check images:
-
-```bash
-docker images | findstr educenter
-```
-
----
-
-# Home Server Deployment With K3s
-
-This project includes Kubernetes files and scripts for deploying EduCenter OS on a Linux home server.
-
-Recommended server:
-
-```text
-Ubuntu Server 22.04 or 24.04
-2 CPU cores minimum
-4 GB RAM minimum
-20 GB+ storage
-Internet connection
-SSH access
-```
-
----
-
-## Home Server Architecture
-
-```text
-Home Server
-  └── K3s Kubernetes
-        ├── frontend pod
-        ├── backend pod
-        └── postgres pod
-```
-
-Frontend exposed using NodePort:
-
-```text
-30080
-```
-
-App URL on home network:
-
-```text
-http://SERVER_IP:30080
-```
-
-Example:
-
-```text
-http://192.168.1.50:30080
-```
-
----
-
-## Kubernetes Files
-
-```text
-k8s/namespace.yaml
-k8s/postgres-secret.yaml
-k8s/postgres-pvc.yaml
-k8s/postgres-deployment.yaml
-k8s/postgres-service.yaml
-k8s/backend-deployment.yaml
-k8s/backend-service.yaml
-k8s/frontend-deployment.yaml
-k8s/frontend-service.yaml
-```
-
----
-
-## Home Server Scripts
-
-```text
-scripts/install-k3s.sh
-scripts/deploy-educenter.sh
-```
-
-These scripts are for Linux server, not Windows PowerShell.
-
----
-
-## Deploy On Home Server
-
-### 1. SSH Into Server
-
-```bash
-ssh username@SERVER_IP
-```
-
-Example:
-
-```bash
-ssh lakshay@192.168.1.50
-```
-
----
-
-### 2. Install Git
-
-```bash
-sudo apt update -y
+sudo apt update
 sudo apt install -y git
-```
 
----
-
-### 3. Clone Repository
-
-```bash
 git clone https://github.com/lakshaywalia666/educenter-os.git
 cd educenter-os
+
+chmod +x scripts/bootstrap-full-homelab.sh
+
+SERVER_IP=192.168.1.18 ./scripts/bootstrap-full-homelab.sh
+```
+
+If your server IP is different:
+
+```bash
+SERVER_IP=192.168.1.50 ./scripts/bootstrap-full-homelab.sh
 ```
 
 ---
 
-### 4. Install K3s
+# 🧪 Verify Deployment
+
+Check all pods:
 
 ```bash
-bash scripts/install-k3s.sh
+kubectl get pods -A
 ```
 
-Check node:
-
-```bash
-kubectl get nodes
-```
-
-Expected:
+Expected important namespaces:
 
 ```text
-NAME      STATUS   ROLES
-server    Ready    control-plane,master
+educenter-os   backend/frontend/postgres running
+argocd         all Argo CD pods running
+monitoring     Grafana/Prometheus/Alertmanager running
+jenkins        jenkins-0 running 2/2
+kube-system    K3s system pods running
 ```
 
----
-
-### 5. Deploy EduCenter OS
-
-```bash
-bash scripts/deploy-educenter.sh
-```
-
-Check all resources:
-
-```bash
-kubectl get all -n educenter-os
-```
-
-Check pods:
-
-```bash
-kubectl get pods -n educenter-os
-```
-
-Expected pods:
-
-```text
-backend
-frontend
-postgres
-```
-
----
-
-### 6. Open App
-
-Find server IP:
-
-```bash
-hostname -I
-```
-
-Open in browser:
-
-```text
-http://SERVER_IP:30080
-```
-
-Example:
-
-```text
-http://192.168.1.50:30080
-```
-
----
-
-## Kubernetes Commands
-
-Check namespace:
-
-```bash
-kubectl get ns
-```
-
-Check all EduCenter resources:
-
-```bash
-kubectl get all -n educenter-os
-```
-
-Check pods:
-
-```bash
-kubectl get pods -n educenter-os
-```
-
-Check services:
+Check EduCenter OS services:
 
 ```bash
 kubectl get svc -n educenter-os
 ```
 
-Check backend logs:
+Expected NodePorts:
 
-```bash
-kubectl logs deployment/backend -n educenter-os
+```text
+frontend   NodePort   3000:30080/TCP
+backend    NodePort   8000:30081/TCP
+postgres   ClusterIP  5432/TCP
 ```
 
-Check frontend logs:
+Check Argo CD:
 
 ```bash
-kubectl logs deployment/frontend -n educenter-os
+kubectl get application educenter-os -n argocd
 ```
 
-Check postgres logs:
+Expected:
 
-```bash
-kubectl logs deployment/postgres -n educenter-os
-```
-
-Restart backend:
-
-```bash
-kubectl rollout restart deployment/backend -n educenter-os
-```
-
-Restart frontend:
-
-```bash
-kubectl rollout restart deployment/frontend -n educenter-os
-```
-
-Delete full EduCenter namespace:
-
-```bash
-kubectl delete namespace educenter-os
+```text
+SYNC STATUS: Synced
+HEALTH STATUS: Healthy
 ```
 
 ---
 
-## Update App On Home Server
+# 🔑 Password Commands
 
-On laptop:
+## Argo CD Password
 
 ```bash
-git add .
-git commit -m "your update message"
-git push origin main
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-GitHub Actions will build and push Docker images.
+Login:
 
-On home server:
+```text
+Username: admin
+URL: https://192.168.1.18:30083
+```
+
+## Grafana Password
 
 ```bash
-cd educenter-os
-git pull
-kubectl rollout restart deployment/backend -n educenter-os
-kubectl rollout restart deployment/frontend -n educenter-os
+kubectl get secret -n monitoring monitoring-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 -d && echo
+```
+
+Login:
+
+```text
+Username: admin
+URL: http://192.168.1.18:30084
+```
+
+## Jenkins Password
+
+```bash
+kubectl exec -n jenkins -it jenkins-0 -c jenkins -- \
+  cat /run/secrets/additional/chart-admin-password && echo
+```
+
+Login:
+
+```text
+Username: admin
+URL: http://192.168.1.18:30086
+```
+
+---
+
+# 🔌 Application API Flow
+
+```mermaid
+flowchart LR
+    UI[Next.js UI] --> StudentsAPI[/students/]
+    UI --> CoursesAPI[/courses/]
+    UI --> BatchesAPI[/batches/]
+    UI --> EnrollAPI[/enrollments/]
+    UI --> FeesAPI[/fees/]
+    UI --> AttendanceAPI[/attendance/]
+    UI --> MessagesAPI[/messages/]
+    UI --> DashboardAPI[/dashboard/stats/]
+
+    StudentsAPI --> DB[(PostgreSQL)]
+    CoursesAPI --> DB
+    BatchesAPI --> DB
+    EnrollAPI --> DB
+    FeesAPI --> DB
+    AttendanceAPI --> DB
+    MessagesAPI --> DB
+    DashboardAPI --> DB
+```
+
+---
+
+# 🧩 Main Modules
+
+## 👨‍🎓 Students
+
+Used to manage student profiles.
+
+Fields include:
+
+- Full name
+- Phone
+- Parent name
+- Parent phone
+- Email
+- Address
+- Status
+
+## 📚 Courses
+
+Used to manage course information.
+
+Fields include:
+
+- Course name
+- Description
+- Monthly fee
+- Duration
+- Status
+
+## 🗓️ Batches
+
+Used to group students into scheduled batches.
+
+Fields include:
+
+- Batch name
+- Course
+- Start time
+- End time
+- Days
+- Status
+
+## 🧾 Enrollments
+
+Connects:
+
+```text
+Student + Course + Batch
+```
+
+Enrollments are important because they connect students to courses and batches. Attendance and fee tracking depend on this connection.
+
+## ✅ Attendance
+
+Attendance depends on active enrollments.
+
+Flow:
+
+```mermaid
+flowchart TD
+    Student[Student Created] --> Course[Course Created]
+    Course --> Batch[Batch Created]
+    Batch --> Enrollment[Student Enrolled]
+    Enrollment --> Attendance[Mark Attendance]
+    Attendance --> Dashboard[Dashboard Summary Updated]
+```
+
+## 💸 Fees
+
+Tracks monthly fee information.
+
+Includes:
+
+- Total due
+- Total paid
+- Pending amount
+- Payment status
+
+## 💬 Messages
+
+Logs student or parent communication.
+
+Can be used for:
+
+- Attendance reminders
+- Fee reminders
+- Course updates
+- General communication history
+
+---
+
+# 🐳 Docker Images
+
+Frontend image:
+
+```text
+docker.io/lakshaywalia666/educenter-os-frontend:latest
+```
+
+Backend image:
+
+```text
+docker.io/lakshaywalia666/educenter-os-backend:latest
+```
+
+Database image:
+
+```text
+postgres:16
+```
+
+---
+
+# ☸️ Kubernetes Manifests
+
+Kubernetes manifests are stored in:
+
+```text
+k8s/
+```
+
+| File | Purpose |
+|---|---|
+| `namespace.yaml` | Creates `educenter-os` namespace |
+| `postgres-secret.yaml` | Database credentials |
+| `postgres-pvc.yaml` | Persistent database storage |
+| `postgres-deployment.yaml` | PostgreSQL pod |
+| `postgres-service.yaml` | Internal database service |
+| `backend-deployment.yaml` | FastAPI backend deployment |
+| `backend-service.yaml` | Backend NodePort 30081 |
+| `frontend-deployment.yaml` | Next.js frontend deployment |
+| `frontend-service.yaml` | Frontend NodePort 30080 |
+
+---
+
+# 📈 Monitoring Installation
+
+Monitoring stack is installed with Helm:
+
+```bash
+helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  --set grafana.service.type=NodePort \
+  --set grafana.service.nodePort=30084 \
+  --set prometheus.service.type=NodePort \
+  --set prometheus.service.nodePort=30085 \
+  --set kubeControllerManager.enabled=false \
+  --set kubeScheduler.enabled=false \
+  --set kubeEtcd.enabled=false
+```
+
+Check monitoring pods:
+
+```bash
+kubectl get pods -n monitoring
+```
+
+Expected:
+
+```text
+monitoring-grafana                         Running
+prometheus-monitoring-kube-prometheus      Running
+alertmanager-monitoring-kube-prometheus    Running
+monitoring-kube-state-metrics              Running
+monitoring-prometheus-node-exporter        Running
+monitoring-kube-prometheus-operator        Running
+```
+
+---
+
+# 🏗️ Jenkins
+
+Jenkins is installed with Helm:
+
+```bash
+helm upgrade --install jenkins jenkins/jenkins \
+  --namespace jenkins \
+  --create-namespace \
+  --set controller.serviceType=NodePort \
+  --set controller.nodePort=30086 \
+  --set persistence.storageClass=local-path \
+  --set persistence.size=8Gi
+```
+
+Jenkins URL:
+
+```text
+http://192.168.1.18:30086
+```
+
+Jenkins can later be used to automate:
+
+- Docker image builds
+- Docker Hub pushes
+- GitHub webhooks
+- Kubernetes deployment pipelines
+
+---
+
+# 🔄 Development Workflow
+
+```mermaid
+flowchart LR
+    Code[Write Code] --> Build[Build Frontend/Backend Docker Image]
+    Build --> Push[Push Image to Docker Hub]
+    Push --> Git[Commit Changes to GitHub]
+    Git --> Argo[Argo CD Sync]
+    Argo --> K8s[Kubernetes Updates App]
+    K8s --> Monitor[Prometheus + Grafana Monitor Health]
+```
+
+---
+
+# 🧰 Common Commands
+
+## Check app pods
+
+```bash
 kubectl get pods -n educenter-os
 ```
 
----
+## Check all cluster pods
 
-## Database Details
-
-PostgreSQL database:
-
-```text
-Database: educenter
-User: educenter_user
-Password: educenter_password
-Host inside Docker Compose: postgres
-Host inside Kubernetes: postgres
-Port: 5432
+```bash
+kubectl get pods -A
 ```
 
-In production, these should later be changed to stronger secrets.
+## Restart frontend
 
----
-
-## Environment Variables
-
-Backend uses:
-
-```text
-POSTGRES_DB
-POSTGRES_USER
-POSTGRES_PASSWORD
-POSTGRES_HOST
-POSTGRES_PORT
+```bash
+kubectl rollout restart deployment/frontend -n educenter-os
 ```
 
-Docker Compose sets these in:
+## Restart backend
 
-```text
-docker-compose.yml
-docker-compose.prod.yml
+```bash
+kubectl rollout restart deployment/backend -n educenter-os
 ```
 
-Kubernetes sets these using:
+## Check services
 
-```text
-k8s/postgres-secret.yaml
-backend-deployment.yaml
+```bash
+kubectl get svc -A
 ```
 
----
+## Check Argo CD app
 
-## Current Known Limitations
+```bash
+kubectl get application educenter-os -n argocd
+```
 
-- No login/auth yet
-- WhatsApp is currently link-based, not automatic Cloud API sending
-- Database migrations are currently handled with SQLAlchemy `create_all`
-- No Alembic migrations yet
-- No HTTPS yet
-- No Ingress yet
-- No Jenkins pipeline yet
-- No Argo CD yet
-- No monitoring stack yet
+## Check monitoring pods
 
----
+```bash
+kubectl get pods -n monitoring
+```
 
-## Planned Next Improvements
+## Check Jenkins
 
-```text
-1. Add login/auth
-2. Add Alembic database migrations
-3. Add real WhatsApp Cloud API integration
-4. Add Kubernetes Ingress
-5. Add Argo CD GitOps deployment
-6. Add Jenkins pipeline for resume/demo
-7. Add Prometheus and Grafana monitoring
-8. Add backup and restore for PostgreSQL
-9. Add role-based admin access
-10. Add proper production secrets
+```bash
+kubectl get pods -n jenkins
+kubectl get svc -n jenkins
 ```
 
 ---
 
-## Quick Commands
+# 🛠️ Troubleshooting
 
-### Start local Docker build
+## Frontend cannot connect to backend
+
+Check backend service:
 
 ```bash
-docker compose up -d --build
+kubectl get svc -n educenter-os
 ```
 
-### Start Docker Hub production compose
+Backend should expose:
 
-```bash
-docker compose -f docker-compose.prod.yml up -d
+```text
+8000:30081/TCP
 ```
 
-### Stop Docker Hub production compose
+Check backend health:
 
 ```bash
-docker compose -f docker-compose.prod.yml down
+curl -i http://192.168.1.18:30081/health
 ```
 
-### Pull latest Docker Hub images
+## Browser CORS error
 
-```bash
-docker compose -f docker-compose.prod.yml pull
+Backend must allow frontend origin:
+
+```text
+http://192.168.1.18:30080
 ```
 
-### Check Git status
+Check backend CORS:
 
 ```bash
-git status
+grep -n "allow_origins" -A8 backend/app/main.py
 ```
 
-### Push code
+## Pods not running
 
 ```bash
-git add .
-git commit -m "update"
-git push origin main
+kubectl describe pod <pod-name> -n <namespace>
+kubectl logs <pod-name> -n <namespace>
+```
+
+## Argo CD out of sync
+
+```bash
+kubectl get application educenter-os -n argocd
+kubectl describe application educenter-os -n argocd
+```
+
+## Grafana not opening
+
+```bash
+kubectl get svc -n monitoring
+kubectl get pods -n monitoring
+```
+
+Grafana should expose:
+
+```text
+80:30084/TCP
+```
+
+## Jenkins not opening
+
+```bash
+kubectl get pods -n jenkins
+kubectl get svc -n jenkins
+```
+
+Jenkins should expose:
+
+```text
+8080:30086/TCP
 ```
 
 ---
 
-## Author
+# ✅ Final Homelab Status
 
-Built by Lakshay Walia.
-
-Docker Hub:
+Current tested status:
 
 ```text
-lakshaywalia666
+EduCenter OS Frontend ✅
+EduCenter OS Backend ✅
+PostgreSQL Database ✅
+Argo CD GitOps ✅
+Grafana Dashboard ✅
+Prometheus Metrics ✅
+Jenkins Running ✅
+K3s Kubernetes ✅
+GitHub Updated ✅
+Docker Images Pushed ✅
+Premium UI Live ✅
 ```
+
+---
+
+# 👨‍💻 Author
+
+Built by **Lakshay Walia**
 
 GitHub:
 
 ```text
 https://github.com/lakshaywalia666
 ```
+
+Docker Hub:
+
+```text
+docker.io/lakshaywalia666
+```
+
+---
+
+# ⭐ Portfolio Highlight
+
+This project demonstrates:
+
+- Full-stack product building
+- Real Kubernetes deployment
+- Homelab infrastructure
+- GitOps automation
+- Monitoring and observability
+- CI/CD tooling
+- Premium UI design
+- DevOps troubleshooting
+- Production-style documentation
+
+> EduCenter OS is a complete end-to-end DevOps + full-stack homelab project.
+	
