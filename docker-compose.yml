@@ -15,8 +15,20 @@ services:
     depends_on:
       - postgres
     networks:
-      - backend_net
+      - app_net
       - database_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: educenter-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app_net
 
   postgres:
     image: postgres:16
@@ -33,7 +45,7 @@ services:
       - database_net
 
 networks:
-  backend_net:
+  app_net:
     driver: bridge
 
   database_net:
