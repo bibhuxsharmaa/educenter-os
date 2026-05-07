@@ -5,6 +5,10 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
+# -------------------------
+# Students
+# -------------------------
+
 class StudentBase(BaseModel):
     full_name: str
     phone: Optional[str] = None
@@ -37,6 +41,10 @@ class StudentResponse(StudentBase):
         from_attributes = True
 
 
+# -------------------------
+# Courses
+# -------------------------
+
 class CourseBase(BaseModel):
     name: str
     description: Optional[str] = None
@@ -64,6 +72,10 @@ class CourseResponse(CourseBase):
     class Config:
         from_attributes = True
 
+
+# -------------------------
+# Batches
+# -------------------------
 
 class BatchBase(BaseModel):
     name: str
@@ -94,6 +106,10 @@ class BatchResponse(BatchBase):
     class Config:
         from_attributes = True
 
+
+# -------------------------
+# Enrollments
+# -------------------------
 
 class EnrollmentBase(BaseModel):
     student_id: int
@@ -136,10 +152,14 @@ class EnrollmentDetailResponse(BaseModel):
     created_at: datetime
 
 
+# -------------------------
+# Attendance
+# -------------------------
+
 class AttendanceBase(BaseModel):
     enrollment_id: int
     attendance_date: date
-    status: str
+    status: str = "present"
     notes: Optional[str] = None
 
 
@@ -154,6 +174,7 @@ class AttendanceUpdate(BaseModel):
 
 class AttendanceResponse(AttendanceBase):
     id: int
+    marked_at: datetime
     created_at: datetime
 
     class Config:
@@ -163,14 +184,43 @@ class AttendanceResponse(AttendanceBase):
 class AttendanceDetailResponse(BaseModel):
     id: int
     enrollment_id: int
-    attendance_date: date
-    status: str
-    notes: Optional[str] = None
     student_name: str
     course_name: str
     batch_name: str
+    attendance_date: date
+    status: str
+    notes: Optional[str] = None
+    marked_at: datetime
     created_at: datetime
 
+
+class AttendanceStudentStatusResponse(BaseModel):
+    attendance_id: Optional[int] = None
+    enrollment_id: int
+    student_id: int
+    student_name: str
+    course_id: int
+    course_name: str
+    batch_id: int
+    batch_name: str
+    attendance_date: date
+    status: str
+    notes: Optional[str] = None
+    marked_at: Optional[datetime] = None
+
+
+class AttendanceSummaryResponse(BaseModel):
+    batch_id: int
+    attendance_date: date
+    total_students: int
+    present_students: int
+    absent_students: int
+    unmarked_students: int
+
+
+# -------------------------
+# Fee Payments
+# -------------------------
 
 class FeePaymentBase(BaseModel):
     enrollment_id: int

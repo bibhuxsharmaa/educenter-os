@@ -86,8 +86,16 @@ class Enrollment(Base):
     student = relationship("Student", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")
     batch = relationship("Batch", back_populates="enrollments")
-    attendance_records = relationship("Attendance", back_populates="enrollment")
-    fee_payments = relationship("FeePayment", back_populates="enrollment")
+
+    attendance_records = relationship(
+        "Attendance",
+        back_populates="enrollment",
+    )
+
+    fee_payments = relationship(
+        "FeePayment",
+        back_populates="enrollment",
+    )
 
 
 class Attendance(Base):
@@ -104,8 +112,9 @@ class Attendance(Base):
     id = Column(Integer, primary_key=True, index=True)
     enrollment_id = Column(Integer, ForeignKey("enrollments.id"), nullable=False)
     attendance_date = Column(Date, nullable=False)
-    status = Column(String(20), nullable=False)
+    status = Column(String(20), nullable=False, default="present")
     notes = Column(Text, nullable=True)
+    marked_at = Column(DateTime(timezone=True), server_default=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     enrollment = relationship("Enrollment", back_populates="attendance_records")
