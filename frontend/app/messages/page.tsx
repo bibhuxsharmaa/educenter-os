@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 
 type MessageLog = {
   id: number;
@@ -22,6 +23,28 @@ type MessageLog = {
 
 const API_BASE_URL = "http://localhost:8000";
 
+function createMessageTemplate(
+  messageType: string,
+  recipientName: string,
+  courseName = "your course"
+) {
+  const name = recipientName || "Student";
+
+  if (messageType === "fee_reminder") {
+    return `Dear ${name}, your monthly fee payment is pending. Please pay your fee as soon as possible. Thank you.`;
+  }
+
+  if (messageType === "attendance_warning") {
+    return `Dear ${name}, your attendance is low in ${courseName}. Please attend classes regularly to avoid academic issues.`;
+  }
+
+  if (messageType === "payment_reminder") {
+    return `Dear ${name}, this is a payment reminder from EduCenter. Please clear your pending payment at the earliest.`;
+  }
+
+  return `Dear ${name}, this is a message from EduCenter.`;
+}
+
 export default function MessagesPage() {
   const [messages, setMessages] = useState<MessageLog[]>([]);
 
@@ -30,13 +53,25 @@ export default function MessagesPage() {
   const [recipientName, setRecipientName] = useState("asa");
   const [recipientPhone, setRecipientPhone] = useState("9999999999");
   const [messageType, setMessageType] = useState("fee_reminder");
+  const [courseName, setCourseName] = useState("Class 10 Mathematics");
+
   const [messageText, setMessageText] = useState(
-    "Dear asa, your fee payment is pending. Please pay your monthly fee."
+    createMessageTemplate("fee_reminder", "asa", "Class 10 Mathematics")
   );
 
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [error, setError] = useState("");
+
+  function generateTemplate(type = messageType) {
+    const template = createMessageTemplate(type, recipientName, courseName);
+    setMessageText(template);
+  }
+
+  function handleMessageTypeChange(type: string) {
+    setMessageType(type);
+    setMessageText(createMessageTemplate(type, recipientName, courseName));
+  }
 
   async function loadMessages() {
     try {
@@ -146,26 +181,26 @@ export default function MessagesPage() {
     loadMessages();
   }, []);
 
-  const pageStyle: React.CSSProperties = {
+  const pageStyle: CSSProperties = {
     minHeight: "100vh",
     backgroundColor: "#f3f4f6",
     padding: "24px",
     color: "#111827",
   };
 
-  const containerStyle: React.CSSProperties = {
+  const containerStyle: CSSProperties = {
     maxWidth: "1200px",
     margin: "0 auto",
   };
 
-  const cardStyle: React.CSSProperties = {
+  const cardStyle: CSSProperties = {
     backgroundColor: "white",
     borderRadius: "14px",
     padding: "20px",
     boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
   };
 
-  const inputStyle: React.CSSProperties = {
+  const inputStyle: CSSProperties = {
     width: "100%",
     padding: "10px 12px",
     border: "1px solid #d1d5db",
@@ -175,7 +210,7 @@ export default function MessagesPage() {
     backgroundColor: "white",
   };
 
-  const labelStyle: React.CSSProperties = {
+  const labelStyle: CSSProperties = {
     display: "block",
     marginBottom: "6px",
     fontSize: "14px",
@@ -183,7 +218,7 @@ export default function MessagesPage() {
     color: "#374151",
   };
 
-  const thStyle: React.CSSProperties = {
+  const thStyle: CSSProperties = {
     padding: "14px 16px",
     textAlign: "left",
     fontSize: "14px",
@@ -193,7 +228,7 @@ export default function MessagesPage() {
     borderBottom: "1px solid #e5e7eb",
   };
 
-  const tdStyle: React.CSSProperties = {
+  const tdStyle: CSSProperties = {
     padding: "14px 16px",
     fontSize: "14px",
     color: "#111827",
@@ -209,8 +244,7 @@ export default function MessagesPage() {
             Messages
           </h1>
           <p style={{ marginTop: "6px", color: "#4b5563", fontSize: "16px" }}>
-            Create and track manual message logs. WhatsApp integration will come
-            later.
+            Select a message type and EduCenter will auto-create the template.
           </p>
         </div>
 
@@ -268,10 +302,20 @@ export default function MessagesPage() {
             </div>
 
             <div>
+              <label style={labelStyle}>Course / Batch Name</label>
+              <input
+                value={courseName}
+                onChange={(e) => setCourseName(e.target.value)}
+                style={inputStyle}
+                placeholder="Example: Class 10 Mathematics"
+              />
+            </div>
+
+            <div>
               <label style={labelStyle}>Message Type</label>
               <select
                 value={messageType}
-                onChange={(e) => setMessageType(e.target.value)}
+                onChange={(e) => handleMessageTypeChange(e.target.value)}
                 style={inputStyle}
               >
                 <option value="general">General</option>
@@ -296,6 +340,23 @@ export default function MessagesPage() {
           </div>
 
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={() => generateTemplate()}
+              style={{
+                padding: "11px 16px",
+                borderRadius: "8px",
+                border: "1px solid #d1d5db",
+                backgroundColor: "white",
+                color: "#111827",
+                fontWeight: 800,
+                cursor: "pointer",
+                fontSize: "15px",
+              }}
+            >
+              Generate Template
+            </button>
+
             <button
               type="button"
               onClick={createMessage}
