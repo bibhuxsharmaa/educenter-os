@@ -45,6 +45,30 @@ function createMessageTemplate(
   return `Dear ${name}, this is a message from EduCenter.`;
 }
 
+function getWhatsAppPhoneNumber(phone: string) {
+  const cleanPhone = phone.replace(/\D/g, "");
+
+  if (cleanPhone.startsWith("91") && cleanPhone.length === 12) {
+    return cleanPhone;
+  }
+
+  if (cleanPhone.length === 10) {
+    return `91${cleanPhone}`;
+  }
+
+  return cleanPhone;
+}
+
+function openWhatsApp(phone: string, message: string) {
+  const whatsappPhone = getWhatsAppPhoneNumber(phone);
+  const encodedMessage = encodeURIComponent(message);
+
+  window.open(
+    `https://wa.me/${whatsappPhone}?text=${encodedMessage}`,
+    "_blank"
+  );
+}
+
 export default function MessagesPage() {
   const [messages, setMessages] = useState<MessageLog[]>([]);
 
@@ -422,7 +446,7 @@ export default function MessagesPage() {
             <table
               style={{
                 width: "100%",
-                minWidth: "1100px",
+                minWidth: "1200px",
                 borderCollapse: "collapse",
               }}
             >
@@ -525,7 +549,35 @@ export default function MessagesPage() {
                       </td>
 
                       <td style={tdStyle}>
-                        <div style={{ display: "flex", gap: "10px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "10px",
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openWhatsApp(
+                                message.recipient_phone,
+                                message.message_text
+                              )
+                            }
+                            style={{
+                              backgroundColor: "#22c55e",
+                              color: "white",
+                              padding: "8px 12px",
+                              borderRadius: "8px",
+                              border: "none",
+                              fontWeight: 800,
+                              cursor: "pointer",
+                              minWidth: "110px",
+                            }}
+                          >
+                            WhatsApp
+                          </button>
+
                           {!isSent && (
                             <button
                               type="button"
