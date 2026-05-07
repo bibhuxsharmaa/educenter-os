@@ -3,79 +3,47 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type Student = {
-  id: number;
-  name: string;
-  phone: string;
-  course: string;
-  monthlyFee: number;
+type DashboardStats = {
+  total_students: number;
+  total_courses: number;
+  total_batches: number;
 };
 
-type AttendanceStatus = "present" | "absent";
-type FeeStatus = "paid" | "unpaid";
+const API_URL = "http://localhost:8000";
 
 export default function Home() {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [attendance, setAttendance] = useState<Record<number, AttendanceStatus>>(
-    {}
-  );
-  const [fees, setFees] = useState<Record<number, FeeStatus>>({});
-  const [messagesSent, setMessagesSent] = useState(0);
+  const [stats, setStats] = useState<DashboardStats>({
+    total_students: 0,
+    total_courses: 0,
+    total_batches: 0,
+  });
 
-  const today = new Date().toLocaleDateString("en-CA");
-  const attendanceKey = `educenter-attendance-${today}`;
+  const [isLoading, setIsLoading] = useState(true);
+  const [apiStatus, setApiStatus] = useState("Checking...");
 
-  const now = new Date();
-  const feeKey = `educenter-fees-${now.getFullYear()}-${now.getMonth() + 1}`;
-  const messagesSentKey = `educenter-messages-sent-${now.getFullYear()}-${
-    now.getMonth() + 1
-  }`;
+  async function fetchDashboardStats() {
+    try {
+      const response = await fetch(`${API_URL}/dashboard/stats`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch dashboard stats");
+      }
+
+      const data = await response.json();
+
+      setStats(data);
+      setApiStatus("Connected");
+    } catch (error) {
+      console.error(error);
+      setApiStatus("Backend not connected");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const savedStudents = localStorage.getItem("educenter-students");
-    const savedAttendance = localStorage.getItem(attendanceKey);
-    const savedFees = localStorage.getItem(feeKey);
-    const savedMessagesSent = localStorage.getItem(messagesSentKey);
-
-    if (savedStudents) {
-      setStudents(JSON.parse(savedStudents));
-    }
-
-    if (savedAttendance) {
-      setAttendance(JSON.parse(savedAttendance));
-    }
-
-    if (savedFees) {
-      setFees(JSON.parse(savedFees));
-    }
-
-    if (savedMessagesSent) {
-      setMessagesSent(Number(savedMessagesSent));
-    }
-  }, [attendanceKey, feeKey, messagesSentKey]);
-
-  const totalStudents = students.length;
-
-  const totalMonthlyFees = students.reduce((total, student) => {
-    return total + student.monthlyFee;
-  }, 0);
-
-  const collectedFees = students.reduce((total, student) => {
-    if (fees[student.id] === "paid") {
-      return total + student.monthlyFee;
-    }
-
-    return total;
-  }, 0);
-
-  const pendingFees = totalMonthlyFees - collectedFees;
-
-  const presentCount = Object.values(attendance).filter(
-    (status) => status === "present"
-  ).length;
-
-  const attendancePercentage =
-    totalStudents === 0 ? 0 : Math.round((presentCount / totalStudents) * 100);
+    fetchDashboardStats();
+  }, []);
 
   return (
     <main className="min-h-screen bg-gray-100 p-8">
@@ -83,7 +51,8 @@ export default function Home() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900">EduCenter OS</h1>
           <p className="mt-2 text-gray-600">
-            Manage students, attendance, fees, and communication from one place.
+            Manage students, courses, batches, attendance, fees, and
+            communication from one place.
           </p>
         </div>
 
@@ -93,32 +62,34 @@ export default function Home() {
               Total Students
             </h2>
             <p className="mt-3 text-3xl font-bold text-gray-900">
-              {totalStudents}
+              {isLoading ? "..." : stats.total_students}
             </p>
           </div>
 
           <div className="rounded-xl bg-white p-6 shadow">
             <h2 className="text-sm font-medium text-gray-500">
-              Today Attendance
+              Total Courses
             </h2>
             <p className="mt-3 text-3xl font-bold text-gray-900">
-              {attendancePercentage}%
-            </p>
-          </div>
-
-          <div className="rounded-xl bg-white p-6 shadow">
-            <h2 className="text-sm font-medium text-gray-500">Pending Fees</h2>
-            <p className="mt-3 text-3xl font-bold text-gray-900">
-              ₹{pendingFees}
+              {isLoading ? "..." : stats.total_courses}
             </p>
           </div>
 
           <div className="rounded-xl bg-white p-6 shadow">
             <h2 className="text-sm font-medium text-gray-500">
-              Messages Sent
+              Total Batches
             </h2>
             <p className="mt-3 text-3xl font-bold text-gray-900">
-              {messagesSent}
+              {isLoading ? "..." : stats.total_batches}
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-white p-6 shadow">
+            <h2 className="text-sm font-medium text-gray-500">
+              Backend Status
+            </h2>
+            <p className="mt-3 text-2xl font-bold text-gray-900">
+              {apiStatus}
             </p>
           </div>
         </div>
@@ -129,8 +100,9 @@ export default function Home() {
           </h2>
 
           <p className="mt-2 text-gray-600">
-            This is the control center of EduCenter OS. You can manage students,
-            mark attendance, track fees, and send WhatsApp reminders.
+            This dashboard is now connected to the FastAPI backend and
+            PostgreSQL database. You can manage students, courses, and batches
+            from here.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-4">
@@ -138,29 +110,30 @@ export default function Home() {
               href="/students"
               className="rounded-lg bg-black px-5 py-3 text-white"
             >
-              Add Student
+              Manage Students
             </Link>
 
             <Link
-              href="/attendance"
+              href="/courses"
               className="rounded-lg border border-gray-300 px-5 py-3 text-gray-800"
             >
-              Mark Attendance
+              Manage Courses
             </Link>
 
             <Link
-              href="/fees"
+              href="/batches"
               className="rounded-lg border border-gray-300 px-5 py-3 text-gray-800"
             >
-              View Fees
+              Manage Batches
             </Link>
 
-            <Link
-              href="/messages"
+            <a
+              href="http://localhost:8000/docs"
+              target="_blank"
               className="rounded-lg border border-gray-300 px-5 py-3 text-gray-800"
             >
-              Send Message
-            </Link>
+              Open Backend Docs
+            </a>
           </div>
         </div>
       </section>
