@@ -10,6 +10,7 @@ from app.routers import (
     dashboard,
     enrollments,
     fees,
+    messages,
     students,
 )
 
@@ -38,6 +39,7 @@ app.include_router(batches.router)
 app.include_router(enrollments.router)
 app.include_router(fees.router)
 app.include_router(attendance.router)
+app.include_router(messages.router)
 app.include_router(dashboard.router)
 
 

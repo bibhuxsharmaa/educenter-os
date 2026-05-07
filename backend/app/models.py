@@ -144,3 +144,28 @@ class FeePayment(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     enrollment = relationship("Enrollment", back_populates="fee_payments")
+
+
+class MessageLog(Base):
+    __tablename__ = "message_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    student_id = Column(Integer, ForeignKey("students.id"), nullable=True)
+    enrollment_id = Column(Integer, ForeignKey("enrollments.id"), nullable=True)
+
+    recipient_name = Column(String(150), nullable=True)
+    recipient_phone = Column(String(20), nullable=False)
+
+    message_type = Column(String(50), nullable=False, default="general")
+    message_text = Column(Text, nullable=False)
+
+    status = Column(String(20), nullable=False, default="draft")
+    provider = Column(String(50), nullable=True)
+    provider_response = Column(Text, nullable=True)
+
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    student = relationship("Student")
+    enrollment = relationship("Enrollment")

@@ -58,7 +58,6 @@ def get_dashboard_stats(
         )
 
     active_enrollments = active_enrollments_query.all()
-
     total_active_enrollments = len(active_enrollments)
 
     present_students = (
@@ -112,6 +111,26 @@ def get_dashboard_stats(
     if pending_amount < 0:
         pending_amount = Decimal("0.00")
 
+    total_messages = db.query(models.MessageLog).count()
+
+    sent_messages = (
+        db.query(models.MessageLog)
+        .filter(models.MessageLog.status == "sent")
+        .count()
+    )
+
+    draft_messages = (
+        db.query(models.MessageLog)
+        .filter(models.MessageLog.status == "draft")
+        .count()
+    )
+
+    failed_messages = (
+        db.query(models.MessageLog)
+        .filter(models.MessageLog.status == "failed")
+        .count()
+    )
+
     return {
         "students": {
             "total": total_students,
@@ -143,6 +162,9 @@ def get_dashboard_stats(
             "pending_amount": float(pending_amount),
         },
         "messages": {
-            "sent": 0,
+            "total": total_messages,
+            "sent": sent_messages,
+            "draft": draft_messages,
+            "failed": failed_messages,
         },
     }

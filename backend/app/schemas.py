@@ -266,3 +266,75 @@ class FeePaymentDetailResponse(BaseModel):
     paid_at: Optional[datetime] = None
     notes: Optional[str] = None
     created_at: datetime
+
+
+# -------------------------
+# Message Logs
+# -------------------------
+
+class MessageLogBase(BaseModel):
+    student_id: Optional[int] = None
+    enrollment_id: Optional[int] = None
+
+    recipient_name: Optional[str] = None
+    recipient_phone: str
+
+    message_type: str = "general"
+    message_text: str
+
+    status: str = "draft"
+    provider: Optional[str] = None
+    provider_response: Optional[str] = None
+
+
+class MessageLogCreate(MessageLogBase):
+    pass
+
+
+class MessageLogUpdate(BaseModel):
+    student_id: Optional[int] = None
+    enrollment_id: Optional[int] = None
+
+    recipient_name: Optional[str] = None
+    recipient_phone: Optional[str] = None
+
+    message_type: Optional[str] = None
+    message_text: Optional[str] = None
+
+    status: Optional[str] = None
+    provider: Optional[str] = None
+    provider_response: Optional[str] = None
+    sent_at: Optional[datetime] = None
+
+
+class MessageLogResponse(MessageLogBase):
+    id: int
+    sent_at: Optional[datetime] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class MessageLogDetailResponse(BaseModel):
+    id: int
+
+    student_id: Optional[int] = None
+    enrollment_id: Optional[int] = None
+
+    student_name: Optional[str] = None
+    course_name: Optional[str] = None
+    batch_name: Optional[str] = None
+
+    recipient_name: Optional[str] = None
+    recipient_phone: str
+
+    message_type: str
+    message_text: str
+
+    status: str
+    provider: Optional[str] = None
+    provider_response: Optional[str] = None
+
+    sent_at: Optional[datetime] = None
+    created_at: datetime
