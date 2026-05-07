@@ -87,6 +87,7 @@ class Enrollment(Base):
     course = relationship("Course", back_populates="enrollments")
     batch = relationship("Batch", back_populates="enrollments")
     attendance_records = relationship("Attendance", back_populates="enrollment")
+    fee_payments = relationship("FeePayment", back_populates="enrollment")
 
 
 class Attendance(Base):
@@ -108,3 +109,29 @@ class Attendance(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     enrollment = relationship("Enrollment", back_populates="attendance_records")
+
+
+class FeePayment(Base):
+    __tablename__ = "fee_payments"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "enrollment_id",
+            "fee_month",
+            "fee_year",
+            name="unique_enrollment_fee_month_year",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    enrollment_id = Column(Integer, ForeignKey("enrollments.id"), nullable=False)
+    fee_month = Column(Integer, nullable=False)
+    fee_year = Column(Integer, nullable=False)
+    amount_due = Column(Numeric(10, 2), nullable=False, default=0)
+    amount_paid = Column(Numeric(10, 2), nullable=False, default=0)
+    status = Column(String(20), default="pending")
+    paid_at = Column(DateTime(timezone=True), nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    enrollment = relationship("Enrollment", back_populates="fee_payments")

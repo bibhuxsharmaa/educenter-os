@@ -170,3 +170,49 @@ class AttendanceDetailResponse(BaseModel):
     course_name: str
     batch_name: str
     created_at: datetime
+
+
+class FeePaymentBase(BaseModel):
+    enrollment_id: int
+    fee_month: int
+    fee_year: int
+    amount_due: Decimal = Decimal("0.00")
+    amount_paid: Decimal = Decimal("0.00")
+    status: str = "pending"
+    notes: Optional[str] = None
+
+
+class FeePaymentCreate(FeePaymentBase):
+    pass
+
+
+class FeePaymentUpdate(BaseModel):
+    amount_due: Optional[Decimal] = None
+    amount_paid: Optional[Decimal] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class FeePaymentResponse(FeePaymentBase):
+    id: int
+    paid_at: Optional[datetime] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class FeePaymentDetailResponse(BaseModel):
+    id: int
+    enrollment_id: int
+    student_name: str
+    course_name: str
+    batch_name: str
+    fee_month: int
+    fee_year: int
+    amount_due: Decimal
+    amount_paid: Decimal
+    status: str
+    paid_at: Optional[datetime] = None
+    notes: Optional[str] = None
+    created_at: datetime
