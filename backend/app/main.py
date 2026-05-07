@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app.database import Base, engine, get_db
-from app.routers import batches, courses, students
+from app.routers import batches, courses, dashboard, students
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,6 +17,7 @@ app = FastAPI(
 app.include_router(students.router)
 app.include_router(courses.router)
 app.include_router(batches.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/")
