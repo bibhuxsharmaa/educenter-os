@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
+import { Trash2, UserPlus, Users } from "lucide-react";
+import PremiumShell from "../components/PremiumShell";
 
 type Student = {
   id: number;
@@ -117,129 +118,149 @@ export default function StudentsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <section className="mx-auto max-w-6xl">
-        <Link href="/" className="text-sm text-gray-600 hover:text-black">
-          ← Back to Dashboard
-        </Link>
-
-        <div className="mt-6">
-          <h1 className="text-4xl font-bold text-gray-900">Students</h1>
-          <p className="mt-2 text-gray-600">
-            Add and manage students using the FastAPI backend and PostgreSQL.
-          </p>
-        </div>
-
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Add New Student
-          </h2>
-
-          <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
-            <input
-              type="text"
-              placeholder="Student full name"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-            />
-
-            <input
-              type="text"
-              placeholder="Student phone"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-            />
-
-            <input
-              type="text"
-              placeholder="Parent name"
-              value={parentName}
-              onChange={(event) => setParentName(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-            />
-
-            <input
-              type="text"
-              placeholder="Parent phone"
-              value={parentPhone}
-              onChange={(event) => setParentPhone(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-            />
-
-            <input
-              type="email"
-              placeholder="Email optional"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-            />
-
-            <textarea
-              placeholder="Address optional"
-              value={address}
-              onChange={(event) => setAddress(event.target.value)}
-              className="min-h-24 rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-            />
-
-            <button
-              type="submit"
-              className="mt-2 rounded-lg bg-black px-5 py-3 text-white"
-            >
-              Save Student to Database
-            </button>
-          </form>
-        </div>
-
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Student List
-          </h2>
-
-          {isLoading ? (
-            <p className="mt-4 text-gray-600">Loading students...</p>
-          ) : students.length === 0 ? (
-            <p className="mt-4 text-gray-600">No students found in database.</p>
-          ) : (
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-b text-gray-600">
-                    <th className="py-3">Name</th>
-                    <th className="py-3">Phone</th>
-                    <th className="py-3">Parent</th>
-                    <th className="py-3">Parent Phone</th>
-                    <th className="py-3">Status</th>
-                    <th className="py-3">Action</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {students.map((student) => (
-                    <tr key={student.id} className="border-b text-gray-900">
-                      <td className="py-3">{student.full_name}</td>
-                      <td className="py-3">{student.phone || "-"}</td>
-                      <td className="py-3">{student.parent_name || "-"}</td>
-                      <td className="py-3">{student.parent_phone || "-"}</td>
-                      <td className="py-3 capitalize">{student.status}</td>
-                      <td className="py-3">
-                        <button
-                          type="button"
-                          onClick={() => deleteStudent(student.id)}
-                          className="rounded-lg border border-red-300 px-3 py-2 text-red-600 hover:bg-red-50"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+    <PremiumShell>
+      <main className="module-page">
+        <section className="module-hero">
+          <div>
+            <div className="module-badge">
+              <Users size={16} /> Student Registry
             </div>
-          )}
-        </div>
-      </section>
-    </main>
+            <h1>Students</h1>
+            <p>Add, manage, and track student profiles from one premium console.</p>
+          </div>
+
+          <div className="module-badge">{students.length} Students</div>
+        </section>
+
+        <section className="module-grid">
+          <div className="module-panel">
+            <h2>
+              <UserPlus size={20} /> Add New Student
+            </h2>
+
+            <form onSubmit={handleSubmit} className="module-form">
+              <div className="form-row">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  placeholder="Example: Demo Student"
+                  value={fullName}
+                  onChange={(event) => setFullName(event.target.value)}
+                />
+              </div>
+
+              <div className="form-row">
+                <label>Student Phone</label>
+                <input
+                  type="text"
+                  placeholder="Example: 9999999999"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                />
+              </div>
+
+              <div className="form-row">
+                <label>Parent Name</label>
+                <input
+                  type="text"
+                  placeholder="Example: Demo Parent"
+                  value={parentName}
+                  onChange={(event) => setParentName(event.target.value)}
+                />
+              </div>
+
+              <div className="form-row">
+                <label>Parent Phone</label>
+                <input
+                  type="text"
+                  placeholder="Example: 8888888888"
+                  value={parentPhone}
+                  onChange={(event) => setParentPhone(event.target.value)}
+                />
+              </div>
+
+              <div className="form-row">
+                <label>Email</label>
+                <input
+                  type="email"
+                  placeholder="student@example.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </div>
+
+              <div className="form-row">
+                <label>Address</label>
+                <textarea
+                  placeholder="Student address"
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
+                  style={{
+                    width: "100%",
+                    minHeight: "92px",
+                    paddingTop: "12px",
+                    resize: "vertical",
+                  }}
+                />
+              </div>
+
+              <button type="submit" className="primary-action">
+                Save Student
+              </button>
+            </form>
+          </div>
+
+          <div className="module-panel">
+            <h2>
+              <Users size={20} /> Student List
+            </h2>
+
+            {isLoading ? (
+              <div className="empty-state">Loading students...</div>
+            ) : students.length === 0 ? (
+              <div className="empty-state">No students found in database.</div>
+            ) : (
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Parent</th>
+                      <th>Parent Phone</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {students.map((student) => (
+                      <tr key={student.id}>
+                        <td>{student.full_name}</td>
+                        <td>{student.phone || "-"}</td>
+                        <td>{student.parent_name || "-"}</td>
+                        <td>{student.parent_phone || "-"}</td>
+                        <td>
+                          <span className="status-pill">{student.status}</span>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="danger-action"
+                            onClick={() => deleteStudent(student.id)}
+                          >
+                            <Trash2 size={15} /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+    </PremiumShell>
   );
 }

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
+import { CalendarDays, Layers3, Plus, Trash2 } from "lucide-react";
+import PremiumShell from "../components/PremiumShell";
 
 type Course = {
   id: number;
@@ -144,143 +146,152 @@ export default function BatchesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <section className="mx-auto max-w-6xl">
-        <Link href="/" className="text-sm text-gray-600 hover:text-black">
-          ← Back to Dashboard
-        </Link>
-
-        <div className="mt-6">
-          <h1 className="text-4xl font-bold text-gray-900">Batches</h1>
-          <p className="mt-2 text-gray-600">
-            Create and manage batches for your courses.
-          </p>
-        </div>
-
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Add New Batch
-          </h2>
-
-          {courses.length === 0 && !isLoading ? (
-            <div className="mt-4">
-              <p className="text-gray-600">
-                No courses found. Please create a course before creating a batch.
-              </p>
-
-              <Link
-                href="/courses"
-                className="mt-4 inline-block rounded-lg bg-black px-5 py-3 text-white"
-              >
-                Add Course First
-              </Link>
+    <PremiumShell>
+      <main className="module-page">
+        <section className="module-hero">
+          <div>
+            <div className="module-badge">
+              <CalendarDays size={16} /> Batch Operations
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
-              <input
-                type="text"
-                placeholder="Batch name, example: Morning Batch"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-              />
+            <h1>Batches</h1>
+            <p>Create polished schedules and manage course batches.</p>
+          </div>
 
-              <select
-                value={courseId}
-                onChange={(event) => setCourseId(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900"
-              >
-                <option value="">Select course</option>
-                {courses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.name}
-                  </option>
-                ))}
-              </select>
+          <div className="module-badge">
+            {batches.length} Active Batches
+          </div>
+        </section>
 
-              <input
-                type="text"
-                placeholder="Start time, example: 10:00 AM"
-                value={startTime}
-                onChange={(event) => setStartTime(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-              />
+        <section className="module-grid">
+          <div className="module-panel">
+            <h2>
+              <Plus size={20} /> Add New Batch
+            </h2>
 
-              <input
-                type="text"
-                placeholder="End time, example: 11:30 AM"
-                value={endTime}
-                onChange={(event) => setEndTime(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-              />
+            {courses.length === 0 && !isLoading ? (
+              <div className="empty-state">
+                <p>No courses found. Create a course before creating a batch.</p>
+                <Link href="/courses" className="panel-link">
+                  Add Course First
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="module-form">
+                <div className="form-row">
+                  <label>Batch Name</label>
+                  <input
+                    type="text"
+                    placeholder="Example: Morning Batch"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                  />
+                </div>
 
-              <input
-                type="text"
-                placeholder="Days, example: Mon, Wed, Fri"
-                value={days}
-                onChange={(event) => setDays(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
-              />
+                <div className="form-row">
+                  <label>Course</label>
+                  <select
+                    value={courseId}
+                    onChange={(event) => setCourseId(event.target.value)}
+                  >
+                    <option value="">Select course</option>
+                    {courses.map((course) => (
+                      <option key={course.id} value={course.id}>
+                        {course.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <button
-                type="submit"
-                className="mt-2 rounded-lg bg-black px-5 py-3 text-white"
-              >
-                Save Batch to Database
-              </button>
-            </form>
-          )}
-        </div>
+                <div className="form-row">
+                  <label>Start Time</label>
+                  <input
+                    type="text"
+                    placeholder="Example: 10:00 AM"
+                    value={startTime}
+                    onChange={(event) => setStartTime(event.target.value)}
+                  />
+                </div>
 
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">Batch List</h2>
+                <div className="form-row">
+                  <label>End Time</label>
+                  <input
+                    type="text"
+                    placeholder="Example: 11:30 AM"
+                    value={endTime}
+                    onChange={(event) => setEndTime(event.target.value)}
+                  />
+                </div>
 
-          {isLoading ? (
-            <p className="mt-4 text-gray-600">Loading batches...</p>
-          ) : batches.length === 0 ? (
-            <p className="mt-4 text-gray-600">No batches found in database.</p>
-          ) : (
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-b text-gray-600">
-                    <th className="py-3">Batch Name</th>
-                    <th className="py-3">Course</th>
-                    <th className="py-3">Time</th>
-                    <th className="py-3">Days</th>
-                    <th className="py-3">Status</th>
-                    <th className="py-3">Action</th>
-                  </tr>
-                </thead>
+                <div className="form-row">
+                  <label>Days</label>
+                  <input
+                    type="text"
+                    placeholder="Example: Mon, Wed, Fri"
+                    value={days}
+                    onChange={(event) => setDays(event.target.value)}
+                  />
+                </div>
 
-                <tbody>
-                  {batches.map((batch) => (
-                    <tr key={batch.id} className="border-b text-gray-900">
-                      <td className="py-3">{batch.name}</td>
-                      <td className="py-3">{getCourseName(batch.course_id)}</td>
-                      <td className="py-3">
-                        {batch.start_time || "-"}{" "}
-                        {batch.end_time ? `to ${batch.end_time}` : ""}
-                      </td>
-                      <td className="py-3">{batch.days || "-"}</td>
-                      <td className="py-3 capitalize">{batch.status}</td>
-                      <td className="py-3">
-                        <button
-                          type="button"
-                          onClick={() => deleteBatch(batch.id)}
-                          className="rounded-lg border border-red-300 px-3 py-2 text-red-600 hover:bg-red-50"
-                        >
-                          Delete
-                        </button>
-                      </td>
+                <button type="submit" className="primary-action">
+                  Save Batch
+                </button>
+              </form>
+            )}
+          </div>
+
+          <div className="module-panel">
+            <h2>
+              <Layers3 size={20} /> Batch List
+            </h2>
+
+            {isLoading ? (
+              <div className="empty-state">Loading batches...</div>
+            ) : batches.length === 0 ? (
+              <div className="empty-state">No batches found in database.</div>
+            ) : (
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Batch</th>
+                      <th>Course</th>
+                      <th>Time</th>
+                      <th>Days</th>
+                      <th>Status</th>
+                      <th>Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </section>
-    </main>
+                  </thead>
+
+                  <tbody>
+                    {batches.map((batch) => (
+                      <tr key={batch.id}>
+                        <td>{batch.name}</td>
+                        <td>{getCourseName(batch.course_id)}</td>
+                        <td>
+                          {batch.start_time || "-"} to {batch.end_time || "-"}
+                        </td>
+                        <td>{batch.days || "-"}</td>
+                        <td>
+                          <span className="status-pill">{batch.status}</span>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="danger-action"
+                            onClick={() => deleteBatch(batch.id)}
+                          >
+                            <Trash2 size={15} /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+    </PremiumShell>
   );
 }

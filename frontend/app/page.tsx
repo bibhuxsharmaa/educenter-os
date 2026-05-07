@@ -1,25 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import {
+  ArrowUpRight,
+  BookOpen,
+  CalendarDays,
+  IndianRupee,
+  MessageCircle,
+  Plus,
+  Send,
+  UserCheck,
+  Users,
+  Zap,
+} from "lucide-react";
+import PremiumShell from "./components/PremiumShell";
 
 type DashboardStats = {
-  students: {
-    total: number;
-    active: number;
-  };
-  courses: {
-    total: number;
-    active: number;
-  };
-  batches: {
-    total: number;
-    active: number;
-  };
-  enrollments: {
-    total: number;
-    active: number;
-  };
+  students: { total: number; active: number };
+  courses: { total: number; active: number };
+  batches: { total: number; active: number };
+  enrollments: { total: number; active: number };
   attendance: {
     date: string;
     present: number;
@@ -34,7 +35,10 @@ type DashboardStats = {
     pending_amount: number;
   };
   messages: {
+    total?: number;
     sent: number;
+    draft?: number;
+    failed?: number;
   };
 };
 
@@ -45,8 +49,40 @@ function getLocalTodayDate() {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
-
   return `${year}-${month}-${day}`;
+}
+
+function formatMoney(value: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
+}
+
+function StatCard({
+  title,
+  value,
+  trend,
+  icon,
+  tone,
+}: {
+  title: string;
+  value: string | number;
+  trend: string;
+  icon: React.ReactNode;
+  tone: string;
+}) {
+  return (
+    <div className="stat-card">
+      <div className={`stat-icon ${tone}`}>{icon}</div>
+      <div>
+        <p>{title}</p>
+        <h3>{value}</h3>
+        <span>{trend}</span>
+      </div>
+    </div>
+  );
 }
 
 export default function HomePage() {
@@ -77,7 +113,7 @@ export default function HomePage() {
       setStats(data);
     } catch (err) {
       console.error(err);
-      setError("Could not load dashboard. Make sure backend is running.");
+      setError("Could not load live dashboard data.");
     } finally {
       setLoading(false);
     }
@@ -88,423 +124,271 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const pageStyle: React.CSSProperties = {
-    minHeight: "100vh",
-    backgroundColor: "#f3f4f6",
-    padding: "24px",
-    color: "#111827",
-  };
+  const attendanceTotal =
+    (stats?.attendance.present || 0) +
+    (stats?.attendance.absent || 0) +
+    (stats?.attendance.unmarked || 0);
 
-  const containerStyle: React.CSSProperties = {
-    maxWidth: "1200px",
-    margin: "0 auto",
-  };
+  const presentPercent = attendanceTotal
+    ? Math.round(((stats?.attendance.present || 0) / attendanceTotal) * 100)
+    : 0;
 
-  const cardStyle: React.CSSProperties = {
-    backgroundColor: "white",
-    borderRadius: "14px",
-    padding: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-  };
+  const absentPercent = attendanceTotal
+    ? Math.round(((stats?.attendance.absent || 0) / attendanceTotal) * 100)
+    : 0;
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 12px",
-    border: "1px solid #d1d5db",
-    borderRadius: "8px",
-    fontSize: "16px",
-    color: "#111827",
-    backgroundColor: "white",
-  };
+  const donutStyle = useMemo(() => {
+    const present = presentPercent * 3.6;
+    const absent = absentPercent * 3.6;
 
-  const navLinkStyle: React.CSSProperties = {
-    display: "block",
-    padding: "14px 16px",
-    backgroundColor: "white",
-    borderRadius: "12px",
-    color: "#111827",
-    textDecoration: "none",
-    fontWeight: 700,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-  };
+    return {
+      background: `conic-gradient(#20d98b 0deg ${present}deg, #ff4d6d ${present}deg ${
+        present + absent
+      }deg, #f5c542 ${present + absent}deg 360deg)`,
+    };
+  }, [presentPercent, absentPercent]);
 
   return (
-    <main style={pageStyle}>
-      <div style={containerStyle}>
-        <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "34px", fontWeight: 900, margin: 0 }}>
-            EduCenter OS Dashboard
-          </h1>
-          <p style={{ marginTop: "6px", color: "#4b5563", fontSize: "16px" }}>
-            Live overview of students, courses, batches, fees, and attendance.
-          </p>
-        </div>
+    <PremiumShell>
+      <div className="dashboard-page">
+        <section className="hero-card">
+          <div className="hero-content">
+            <span className="eyebrow">Welcome back, Admin</span>
+            <h1>Good morning! 👋</h1>
+            <p>Here&apos;s what&apos;s happening at EduCenter OS today.</p>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-            gap: "12px",
-            marginBottom: "24px",
-          }}
-        >
-          <Link href="/students" style={navLinkStyle}>
-            Students
-          </Link>
-          <Link href="/courses" style={navLinkStyle}>
-            Courses
-          </Link>
-          <Link href="/batches" style={navLinkStyle}>
-            Batches
-          </Link>
-          <Link href="/enrollments" style={navLinkStyle}>
-            Enrollments
-          </Link>
-          <Link href="/fees" style={navLinkStyle}>
-            Fees
-          </Link>
-          <Link href="/attendance" style={navLinkStyle}>
-            Attendance
-          </Link>
-          <Link href="/messages" style={navLinkStyle}>
-            Messages
-          </Link>
-        </div>
-
-        <div style={{ ...cardStyle, marginBottom: "24px" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: "16px",
-              alignItems: "end",
-            }}
-          >
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "6px",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  color: "#374151",
-                }}
-              >
-                Fee Month
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="12"
-                value={feeMonth}
-                onChange={(e) => setFeeMonth(Number(e.target.value))}
-                style={inputStyle}
-              />
+            <div className="hero-meta">
+              <span>
+                <CalendarDays size={18} />
+                {today.toLocaleDateString("en-IN", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+              <span>
+                <Zap size={18} />
+                Live homelab system
+              </span>
             </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "6px",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  color: "#374151",
-                }}
-              >
-                Fee Year
-              </label>
-              <input
-                type="number"
-                value={feeYear}
-                onChange={(e) => setFeeYear(Number(e.target.value))}
-                style={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "6px",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  color: "#374151",
-                }}
-              >
-                Attendance Date
-              </label>
-              <input
-                type="date"
-                value={attendanceDate}
-                onChange={(e) => setAttendanceDate(e.target.value)}
-                style={inputStyle}
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={loadDashboardStats}
-              disabled={loading}
-              style={{
-                padding: "11px 16px",
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: loading ? "#93c5fd" : "#2563eb",
-                color: "white",
-                fontWeight: 800,
-                cursor: loading ? "not-allowed" : "pointer",
-                fontSize: "15px",
-              }}
-            >
-              {loading ? "Loading..." : "Refresh Dashboard"}
-            </button>
           </div>
 
-          {error && (
-            <div
-              style={{
-                marginTop: "16px",
-                padding: "12px",
-                backgroundColor: "#fee2e2",
-                color: "#b91c1c",
-                borderRadius: "8px",
-                fontSize: "14px",
-                fontWeight: 700,
-              }}
-            >
-              {error}
+          <div className="hologram">
+            <div className="holo-orbit"></div>
+            <div className="holo-card">
+              <BookOpen size={58} />
             </div>
-          )}
-        </div>
+            <div className="holo-base"></div>
+          </div>
+        </section>
 
-        {stats && (
-          <>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: "16px",
-                marginBottom: "24px",
-              }}
-            >
-              <div style={cardStyle}>
-                <p style={{ color: "#6b7280", margin: 0 }}>Total Students</p>
-                <p
-                  style={{
-                    fontSize: "30px",
-                    fontWeight: 900,
-                    margin: "8px 0 0",
-                  }}
-                >
-                  {stats.students.total}
-                </p>
-                <p style={{ color: "#16a34a", margin: "6px 0 0" }}>
-                  Active: {stats.students.active}
-                </p>
-              </div>
+        <section className="filter-card">
+          <div>
+            <label>Fee Month</label>
+            <input
+              type="number"
+              min="1"
+              max="12"
+              value={feeMonth}
+              onChange={(e) => setFeeMonth(Number(e.target.value))}
+            />
+          </div>
 
-              <div style={cardStyle}>
-                <p style={{ color: "#6b7280", margin: 0 }}>Total Courses</p>
-                <p
-                  style={{
-                    fontSize: "30px",
-                    fontWeight: 900,
-                    margin: "8px 0 0",
-                  }}
-                >
-                  {stats.courses.total}
-                </p>
-                <p style={{ color: "#16a34a", margin: "6px 0 0" }}>
-                  Active: {stats.courses.active}
-                </p>
-              </div>
+          <div>
+            <label>Fee Year</label>
+            <input
+              type="number"
+              value={feeYear}
+              onChange={(e) => setFeeYear(Number(e.target.value))}
+            />
+          </div>
 
-              <div style={cardStyle}>
-                <p style={{ color: "#6b7280", margin: 0 }}>Total Batches</p>
-                <p
-                  style={{
-                    fontSize: "30px",
-                    fontWeight: 900,
-                    margin: "8px 0 0",
-                  }}
-                >
-                  {stats.batches.total}
-                </p>
-                <p style={{ color: "#16a34a", margin: "6px 0 0" }}>
-                  Active: {stats.batches.active}
-                </p>
-              </div>
+          <div>
+            <label>Attendance Date</label>
+            <input
+              type="date"
+              value={attendanceDate}
+              onChange={(e) => setAttendanceDate(e.target.value)}
+            />
+          </div>
 
-              <div style={cardStyle}>
-                <p style={{ color: "#6b7280", margin: 0 }}>Enrollments</p>
-                <p
-                  style={{
-                    fontSize: "30px",
-                    fontWeight: 900,
-                    margin: "8px 0 0",
-                  }}
-                >
-                  {stats.enrollments.total}
-                </p>
-                <p style={{ color: "#16a34a", margin: "6px 0 0" }}>
-                  Active: {stats.enrollments.active}
-                </p>
-              </div>
+          <button onClick={loadDashboardStats} disabled={loading}>
+            {loading ? "Refreshing..." : "Refresh Dashboard"}
+          </button>
+        </section>
+
+        {error && <div className="premium-error">{error}</div>}
+
+        <section className="stats-grid">
+          <StatCard
+            title="Total Students"
+            value={stats?.students.total ?? 0}
+            trend={`${stats?.students.active ?? 0} active`}
+            icon={<Users size={24} />}
+            tone="violet"
+          />
+
+          <StatCard
+            title="Active Courses"
+            value={stats?.courses.active ?? 0}
+            trend={`${stats?.courses.total ?? 0} total courses`}
+            icon={<BookOpen size={24} />}
+            tone="cyan"
+          />
+
+          <StatCard
+            title="Active Batches"
+            value={stats?.batches.active ?? 0}
+            trend={`${stats?.batches.total ?? 0} total batches`}
+            icon={<CalendarDays size={24} />}
+            tone="green"
+          />
+
+          <StatCard
+            title="Enrollments"
+            value={stats?.enrollments.total ?? 0}
+            trend={`${stats?.enrollments.active ?? 0} active`}
+            icon={<UserCheck size={24} />}
+            tone="orange"
+          />
+
+          <StatCard
+            title="Monthly Fees"
+            value={formatMoney(stats?.fees.total_due ?? 0)}
+            trend={`${formatMoney(stats?.fees.total_paid ?? 0)} paid`}
+            icon={<IndianRupee size={24} />}
+            tone="pink"
+          />
+
+          <StatCard
+            title="Messages Sent"
+            value={stats?.messages.sent ?? 0}
+            trend={`${stats?.messages.total ?? stats?.messages.sent ?? 0} total`}
+            icon={<MessageCircle size={24} />}
+            tone="blue"
+          />
+        </section>
+
+        <section className="insight-grid">
+          <div className="premium-panel attendance-panel">
+            <div className="panel-head">
+              <h2>Attendance Summary</h2>
+              <span>Today</span>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: "16px",
-                marginBottom: "24px",
-              }}
-            >
-              <div style={cardStyle}>
-                <h2 style={{ fontSize: "20px", fontWeight: 900, margin: 0 }}>
-                  Attendance
-                </h2>
-                <p style={{ color: "#6b7280", marginTop: "6px" }}>
-                  Date: {stats.attendance.date}
-                </p>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, 1fr)",
-                    gap: "10px",
-                    marginTop: "16px",
-                  }}
-                >
-                  <div>
-                    <p style={{ color: "#6b7280", margin: 0 }}>Present</p>
-                    <p
-                      style={{
-                        color: "#16a34a",
-                        fontSize: "28px",
-                        fontWeight: 900,
-                        margin: "6px 0 0",
-                      }}
-                    >
-                      {stats.attendance.present}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p style={{ color: "#6b7280", margin: 0 }}>Absent</p>
-                    <p
-                      style={{
-                        color: "#dc2626",
-                        fontSize: "28px",
-                        fontWeight: 900,
-                        margin: "6px 0 0",
-                      }}
-                    >
-                      {stats.attendance.absent}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p style={{ color: "#6b7280", margin: 0 }}>Unmarked</p>
-                    <p
-                      style={{
-                        color: "#ca8a04",
-                        fontSize: "28px",
-                        fontWeight: 900,
-                        margin: "6px 0 0",
-                      }}
-                    >
-                      {stats.attendance.unmarked}
-                    </p>
-                  </div>
+            <div className="attendance-body">
+              <div className="donut" style={donutStyle}>
+                <div>
+                  <strong>{attendanceTotal}</strong>
+                  <small>Total</small>
                 </div>
               </div>
 
-              <div style={cardStyle}>
-                <h2 style={{ fontSize: "20px", fontWeight: 900, margin: 0 }}>
-                  Fees
-                </h2>
-                <p style={{ color: "#6b7280", marginTop: "6px" }}>
-                  Month: {stats.fees.month}/{stats.fees.year}
-                </p>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, 1fr)",
-                    gap: "10px",
-                    marginTop: "16px",
-                  }}
-                >
-                  <div>
-                    <p style={{ color: "#6b7280", margin: 0 }}>Due</p>
-                    <p
-                      style={{
-                        fontSize: "26px",
-                        fontWeight: 900,
-                        margin: "6px 0 0",
-                      }}
-                    >
-                      ₹{stats.fees.total_due}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p style={{ color: "#6b7280", margin: 0 }}>Paid</p>
-                    <p
-                      style={{
-                        color: "#16a34a",
-                        fontSize: "26px",
-                        fontWeight: 900,
-                        margin: "6px 0 0",
-                      }}
-                    >
-                      ₹{stats.fees.total_paid}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p style={{ color: "#6b7280", margin: 0 }}>Pending</p>
-                    <p
-                      style={{
-                        color: "#dc2626",
-                        fontSize: "26px",
-                        fontWeight: 900,
-                        margin: "6px 0 0",
-                      }}
-                    >
-                      ₹{stats.fees.pending_amount}
-                    </p>
-                  </div>
+              <div className="legend-list">
+                <div>
+                  <span className="legend-dot present"></span>
+                  Present
+                  <strong>{stats?.attendance.present ?? 0}</strong>
+                </div>
+                <div>
+                  <span className="legend-dot absent"></span>
+                  Absent
+                  <strong>{stats?.attendance.absent ?? 0}</strong>
+                </div>
+                <div>
+                  <span className="legend-dot unmarked"></span>
+                  Unmarked
+                  <strong>{stats?.attendance.unmarked ?? 0}</strong>
                 </div>
               </div>
+            </div>
 
-              <div style={cardStyle}>
-                <h2 style={{ fontSize: "20px", fontWeight: 900, margin: 0 }}>
-                  Messages
-                </h2>
-                <p style={{ color: "#6b7280", marginTop: "6px" }}>
-                  WhatsApp/SMS placeholder
-                </p>
+            <Link href="/attendance" className="panel-link">
+              View Attendance <ArrowUpRight size={18} />
+            </Link>
+          </div>
 
-                <p
-                  style={{
-                    fontSize: "30px",
-                    fontWeight: 900,
-                    margin: "16px 0 0",
-                  }}
-                >
-                  {stats.messages.sent}
-                </p>
-                <p style={{ color: "#6b7280", margin: "6px 0 0" }}>
-                  Sent messages
-                </p>
+          <div className="premium-panel">
+            <div className="panel-head">
+              <h2>Fees Summary</h2>
+              <span>
+                {feeMonth}/{feeYear}
+              </span>
+            </div>
+
+            <div className="money-list">
+              <div>
+                <p>Total Due</p>
+                <strong>{formatMoney(stats?.fees.total_due ?? 0)}</strong>
+              </div>
+              <div>
+                <p>Total Paid</p>
+                <strong className="money-green">
+                  {formatMoney(stats?.fees.total_paid ?? 0)}
+                </strong>
+              </div>
+              <div>
+                <p>Pending Amount</p>
+                <strong className="money-red">
+                  {formatMoney(stats?.fees.pending_amount ?? 0)}
+                </strong>
               </div>
             </div>
-          </>
-        )}
+
+            <Link href="/fees" className="panel-link">
+              View Fees <ArrowUpRight size={18} />
+            </Link>
+          </div>
+
+          <div className="premium-panel">
+            <div className="panel-head">
+              <h2>Quick Actions</h2>
+              <span>Fast tools</span>
+            </div>
+
+            <div className="quick-grid">
+              <Link href="/students">
+                <Plus size={24} />
+                Add Student
+              </Link>
+              <Link href="/courses">
+                <BookOpen size={24} />
+                Create Course
+              </Link>
+              <Link href="/batches">
+                <CalendarDays size={24} />
+                New Batch
+              </Link>
+              <Link href="/attendance">
+                <UserCheck size={24} />
+                Mark Attendance
+              </Link>
+              <Link href="/fees">
+                <IndianRupee size={24} />
+                Record Payment
+              </Link>
+              <Link href="/messages">
+                <Send size={24} />
+                Send Message
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="recent-panel">
+          <div className="panel-head">
+            <h2>Recent Activity</h2>
+            <span>Live updates</span>
+          </div>
+
+          <div className="activity-row">
+            <div className="activity-dot"></div>
+            <p>EduCenter OS dashboard connected to live Kubernetes backend.</p>
+            <strong>Healthy</strong>
+          </div>
+        </section>
       </div>
-    </main>
+    </PremiumShell>
   );
 }

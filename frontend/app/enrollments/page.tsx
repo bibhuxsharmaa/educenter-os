@@ -1,5 +1,6 @@
 "use client";
 
+import PremiumShell from "../components/PremiumShell";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
@@ -202,15 +203,12 @@ export default function EnrollmentsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <section className="mx-auto max-w-6xl">
-        <Link href="/" className="text-sm text-gray-600 hover:text-black">
-          ← Back to Dashboard
-        </Link>
-
-        <div className="mt-6">
-          <h1 className="text-4xl font-bold text-gray-900">Enrollments</h1>
-          <p className="mt-2 text-gray-600">
+    <PremiumShell>
+      <main className="module-page">
+      <section className="module-page">
+<div className="module-hero">
+          <h1 >Enrollments</h1>
+          <p >
             Connect students with courses and batches.
           </p>
         </div>
@@ -253,8 +251,8 @@ export default function EnrollmentsPage() {
           </div>
         </div>
 
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">
+        <div className="module-panel">
+          <h2 >
             Add New Enrollment
           </h2>
 
@@ -268,7 +266,7 @@ export default function EnrollmentsPage() {
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link
                   href="/students"
-                  className="rounded-lg bg-black px-5 py-3 text-white"
+                  className="primary-action"
                 >
                   Add Student
                 </Link>
@@ -289,11 +287,11 @@ export default function EnrollmentsPage() {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
+            <form onSubmit={handleSubmit} className="module-form">
               <select
                 value={studentId}
                 onChange={(event) => setStudentId(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900"
+                
               >
                 <option value="">Select student</option>
                 {students.map((student) => (
@@ -306,7 +304,7 @@ export default function EnrollmentsPage() {
               <select
                 value={courseId}
                 onChange={(event) => handleCourseChange(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900"
+                
               >
                 <option value="">Select course</option>
                 {courses.map((course) => (
@@ -319,7 +317,7 @@ export default function EnrollmentsPage() {
               <select
                 value={batchId}
                 onChange={(event) => setBatchId(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900"
+                
                 disabled={!courseId}
               >
                 <option value="">
@@ -338,12 +336,12 @@ export default function EnrollmentsPage() {
                 placeholder="Monthly fee"
                 value={monthlyFee}
                 onChange={(event) => setMonthlyFee(event.target.value)}
-                className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
+                
               />
 
               <button
                 type="submit"
-                className="mt-2 rounded-lg bg-black px-5 py-3 text-white"
+                className="primary-action"
               >
                 Save Enrollment to Database
               </button>
@@ -351,46 +349,46 @@ export default function EnrollmentsPage() {
           )}
         </div>
 
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">
+        <div className="module-panel">
+          <h2 >
             Enrollment List
           </h2>
 
           {isLoading ? (
-            <p className="mt-4 text-gray-600">Loading enrollments...</p>
+            <p className="empty-state">Loading enrollments...</p>
           ) : enrollments.length === 0 ? (
-            <p className="mt-4 text-gray-600">
+            <p className="empty-state">
               No enrollments found in database.
             </p>
           ) : (
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full border-collapse text-left">
+            <div className="table-wrap">
+              <table >
                 <thead>
-                  <tr className="border-b text-gray-600">
-                    <th className="py-3">Student</th>
-                    <th className="py-3">Course</th>
-                    <th className="py-3">Batch</th>
-                    <th className="py-3">Monthly Fee</th>
-                    <th className="py-3">Status</th>
-                    <th className="py-3">Action</th>
+                  <tr >
+                    <th >Student</th>
+                    <th >Course</th>
+                    <th >Batch</th>
+                    <th >Monthly Fee</th>
+                    <th >Status</th>
+                    <th >Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {enrollments.map((enrollment) => (
-                    <tr key={enrollment.id} className="border-b text-gray-900">
-                      <td className="py-3">{enrollment.student_name}</td>
-                      <td className="py-3">{enrollment.course_name}</td>
-                      <td className="py-3">{enrollment.batch_name}</td>
-                      <td className="py-3">
+                    <tr key={enrollment.id} >
+                      <td >{enrollment.student_name}</td>
+                      <td >{enrollment.course_name}</td>
+                      <td >{enrollment.batch_name}</td>
+                      <td >
                         ₹{Number(enrollment.monthly_fee)}
                       </td>
-                      <td className="py-3 capitalize">{enrollment.status}</td>
-                      <td className="py-3">
+                      <td >{enrollment.status}</td>
+                      <td >
                         <button
                           type="button"
                           onClick={() => deleteEnrollment(enrollment.id)}
-                          className="rounded-lg border border-red-300 px-3 py-2 text-red-600 hover:bg-red-50"
+                          className="danger-action"
                         >
                           Delete
                         </button>
@@ -403,6 +401,7 @@ export default function EnrollmentsPage() {
           )}
         </div>
       </section>
-    </main>
+      </main>
+    </PremiumShell>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import PremiumShell from "../components/PremiumShell";
 import { FormEvent, useEffect, useState } from "react";
 
 type Course = {
@@ -109,38 +109,35 @@ export default function CoursesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <section className="mx-auto max-w-6xl">
-        <Link href="/" className="text-sm text-gray-600 hover:text-black">
-          ← Back to Dashboard
-        </Link>
-
-        <div className="mt-6">
-          <h1 className="text-4xl font-bold text-gray-900">Courses</h1>
-          <p className="mt-2 text-gray-600">
+    <PremiumShell>
+      <main className="module-page">
+      <section className="module-page">
+<div className="module-hero">
+          <h1 >Courses</h1>
+          <p >
             Add and manage institute courses using FastAPI and PostgreSQL.
           </p>
         </div>
 
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">
+        <div className="module-panel">
+          <h2 >
             Add New Course
           </h2>
 
-          <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
+          <form onSubmit={handleSubmit} className="module-form">
             <input
               type="text"
               placeholder="Course name, example: Class 10 Maths"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
+              
             />
 
             <textarea
               placeholder="Course description optional"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              className="min-h-24 rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
+              
             />
 
             <input
@@ -148,7 +145,7 @@ export default function CoursesPage() {
               placeholder="Monthly fee"
               value={monthlyFee}
               onChange={(event) => setMonthlyFee(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
+              
             />
 
             <input
@@ -156,54 +153,54 @@ export default function CoursesPage() {
               placeholder="Duration in months optional"
               value={durationMonths}
               onChange={(event) => setDurationMonths(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 placeholder-gray-400"
+              
             />
 
             <button
               type="submit"
-              className="mt-2 rounded-lg bg-black px-5 py-3 text-white"
+              className="primary-action"
             >
               Save Course to Database
             </button>
           </form>
         </div>
 
-        <div className="mt-8 rounded-xl bg-white p-6 shadow">
-          <h2 className="text-2xl font-semibold text-gray-900">Course List</h2>
+        <div className="module-panel">
+          <h2 >Course List</h2>
 
           {isLoading ? (
-            <p className="mt-4 text-gray-600">Loading courses...</p>
+            <p className="empty-state">Loading courses...</p>
           ) : courses.length === 0 ? (
-            <p className="mt-4 text-gray-600">No courses found in database.</p>
+            <p className="empty-state">No courses found in database.</p>
           ) : (
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full border-collapse text-left">
+            <div className="table-wrap">
+              <table >
                 <thead>
-                  <tr className="border-b text-gray-600">
-                    <th className="py-3">Name</th>
-                    <th className="py-3">Monthly Fee</th>
-                    <th className="py-3">Duration</th>
-                    <th className="py-3">Status</th>
-                    <th className="py-3">Action</th>
+                  <tr >
+                    <th >Name</th>
+                    <th >Monthly Fee</th>
+                    <th >Duration</th>
+                    <th >Status</th>
+                    <th >Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {courses.map((course) => (
-                    <tr key={course.id} className="border-b text-gray-900">
-                      <td className="py-3">{course.name}</td>
-                      <td className="py-3">₹{Number(course.monthly_fee)}</td>
-                      <td className="py-3">
+                    <tr key={course.id} >
+                      <td >{course.name}</td>
+                      <td >₹{Number(course.monthly_fee)}</td>
+                      <td >
                         {course.duration_months
                           ? `${course.duration_months} months`
                           : "-"}
                       </td>
-                      <td className="py-3 capitalize">{course.status}</td>
-                      <td className="py-3">
+                      <td >{course.status}</td>
+                      <td >
                         <button
                           type="button"
                           onClick={() => deleteCourse(course.id)}
-                          className="rounded-lg border border-red-300 px-3 py-2 text-red-600 hover:bg-red-50"
+                          className="danger-action"
                         >
                           Delete
                         </button>
@@ -216,6 +213,7 @@ export default function CoursesPage() {
           )}
         </div>
       </section>
-    </main>
+      </main>
+    </PremiumShell>
   );
 }

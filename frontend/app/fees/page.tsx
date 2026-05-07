@@ -1,5 +1,6 @@
 "use client";
 
+import PremiumShell from "../components/PremiumShell";
 import { useEffect, useState } from "react";
 
 type FeeSummary = {
@@ -154,9 +155,9 @@ export default function FeesPage() {
 
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "transparent",
     padding: "24px",
-    color: "#111827",
+    color: "#f8fafc",
   };
 
   const containerStyle: React.CSSProperties = {
@@ -165,20 +166,20 @@ export default function FeesPage() {
   };
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: "white",
+    backgroundColor: "rgba(15, 23, 42, 0.72)",
     borderRadius: "14px",
     padding: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    boxShadow: "0 14px 34px rgba(0,0,0,0.24)",
   };
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
     padding: "10px 12px",
-    border: "1px solid #d1d5db",
+    border: "1px solid rgba(148, 163, 184, 0.22)",
     borderRadius: "8px",
     fontSize: "16px",
-    color: "#111827",
-    backgroundColor: "white",
+    color: "#f8fafc",
+    backgroundColor: "rgba(15, 23, 42, 0.72)",
   };
 
   const thStyle: React.CSSProperties = {
@@ -186,27 +187,28 @@ export default function FeesPage() {
     textAlign: "left",
     fontSize: "14px",
     fontWeight: 700,
-    color: "#374151",
-    backgroundColor: "#f9fafb",
-    borderBottom: "1px solid #e5e7eb",
+    color: "#cbd5e1",
+    backgroundColor: "rgba(2, 6, 23, 0.45)",
+    borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
   };
 
   const tdStyle: React.CSSProperties = {
     padding: "14px 16px",
     fontSize: "14px",
-    color: "#111827",
-    borderBottom: "1px solid #f3f4f6",
+    color: "#f8fafc",
+    borderBottom: "1px solid rgba(148, 163, 184, 0.12)",
     verticalAlign: "middle",
   };
 
   return (
-    <main style={pageStyle}>
+    <PremiumShell>
+      <main style={pageStyle}>
       <div style={containerStyle}>
         <div style={{ marginBottom: "24px" }}>
           <h1 style={{ fontSize: "32px", fontWeight: 800, margin: 0 }}>
             Fees Management
           </h1>
-          <p style={{ marginTop: "6px", color: "#4b5563", fontSize: "16px" }}>
+          <p style={{ marginTop: "6px", color: "#94a3b8", fontSize: "16px" }}>
             Track monthly fees, paid students, and pending payments.
           </p>
         </div>
@@ -227,7 +229,7 @@ export default function FeesPage() {
                   marginBottom: "6px",
                   fontSize: "14px",
                   fontWeight: 600,
-                  color: "#374151",
+                  color: "#cbd5e1",
                 }}
               >
                 Fee Month
@@ -249,7 +251,7 @@ export default function FeesPage() {
                   marginBottom: "6px",
                   fontSize: "14px",
                   fontWeight: 600,
-                  color: "#374151",
+                  color: "#cbd5e1",
                 }}
               >
                 Fee Year
@@ -377,7 +379,7 @@ export default function FeesPage() {
         )}
 
         <div style={{ ...cardStyle, padding: 0, overflow: "hidden" }}>
-          <div style={{ padding: "20px", borderBottom: "1px solid #e5e7eb" }}>
+          <div style={{ padding: "20px", borderBottom: "1px solid rgba(148, 163, 184, 0.18)" }}>
             <h2 style={{ fontSize: "22px", fontWeight: 800, margin: 0 }}>
               Student Fee Status
             </h2>
@@ -511,6 +513,7 @@ export default function FeesPage() {
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </PremiumShell>
   );
 }

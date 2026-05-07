@@ -1,5 +1,6 @@
 "use client";
 
+import PremiumShell from "../components/PremiumShell";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 
@@ -207,9 +208,9 @@ export default function MessagesPage() {
 
   const pageStyle: CSSProperties = {
     minHeight: "100vh",
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "transparent",
     padding: "24px",
-    color: "#111827",
+    color: "#f8fafc",
   };
 
   const containerStyle: CSSProperties = {
@@ -218,20 +219,20 @@ export default function MessagesPage() {
   };
 
   const cardStyle: CSSProperties = {
-    backgroundColor: "white",
+    backgroundColor: "rgba(15, 23, 42, 0.72)",
     borderRadius: "14px",
     padding: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    boxShadow: "0 14px 34px rgba(0,0,0,0.24)",
   };
 
   const inputStyle: CSSProperties = {
     width: "100%",
     padding: "10px 12px",
-    border: "1px solid #d1d5db",
+    border: "1px solid rgba(148, 163, 184, 0.22)",
     borderRadius: "8px",
     fontSize: "16px",
-    color: "#111827",
-    backgroundColor: "white",
+    color: "#f8fafc",
+    backgroundColor: "rgba(15, 23, 42, 0.72)",
   };
 
   const labelStyle: CSSProperties = {
@@ -239,7 +240,7 @@ export default function MessagesPage() {
     marginBottom: "6px",
     fontSize: "14px",
     fontWeight: 700,
-    color: "#374151",
+    color: "#cbd5e1",
   };
 
   const thStyle: CSSProperties = {
@@ -247,27 +248,28 @@ export default function MessagesPage() {
     textAlign: "left",
     fontSize: "14px",
     fontWeight: 700,
-    color: "#374151",
-    backgroundColor: "#f9fafb",
-    borderBottom: "1px solid #e5e7eb",
+    color: "#cbd5e1",
+    backgroundColor: "rgba(2, 6, 23, 0.45)",
+    borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
   };
 
   const tdStyle: CSSProperties = {
     padding: "14px 16px",
     fontSize: "14px",
-    color: "#111827",
-    borderBottom: "1px solid #f3f4f6",
+    color: "#f8fafc",
+    borderBottom: "1px solid rgba(148, 163, 184, 0.12)",
     verticalAlign: "top",
   };
 
   return (
-    <main style={pageStyle}>
+    <PremiumShell>
+      <main style={pageStyle}>
       <div style={containerStyle}>
         <div style={{ marginBottom: "24px" }}>
           <h1 style={{ fontSize: "32px", fontWeight: 900, margin: 0 }}>
             Messages
           </h1>
-          <p style={{ marginTop: "6px", color: "#4b5563", fontSize: "16px" }}>
+          <p style={{ marginTop: "6px", color: "#94a3b8", fontSize: "16px" }}>
             Select a message type and EduCenter will auto-create the template.
           </p>
         </div>
@@ -370,9 +372,9 @@ export default function MessagesPage() {
               style={{
                 padding: "11px 16px",
                 borderRadius: "8px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "white",
-                color: "#111827",
+                border: "1px solid rgba(148, 163, 184, 0.22)",
+                backgroundColor: "rgba(15, 23, 42, 0.72)",
+                color: "#f8fafc",
                 fontWeight: 800,
                 cursor: "pointer",
                 fontSize: "15px",
@@ -406,9 +408,9 @@ export default function MessagesPage() {
               style={{
                 padding: "11px 16px",
                 borderRadius: "8px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "white",
-                color: "#111827",
+                border: "1px solid rgba(148, 163, 184, 0.22)",
+                backgroundColor: "rgba(15, 23, 42, 0.72)",
+                color: "#f8fafc",
                 fontWeight: 800,
                 cursor: loading ? "not-allowed" : "pointer",
                 fontSize: "15px",
@@ -436,7 +438,7 @@ export default function MessagesPage() {
         </div>
 
         <div style={{ ...cardStyle, padding: 0, overflow: "hidden" }}>
-          <div style={{ padding: "20px", borderBottom: "1px solid #e5e7eb" }}>
+          <div style={{ padding: "20px", borderBottom: "1px solid rgba(148, 163, 184, 0.18)" }}>
             <h2 style={{ fontSize: "22px", fontWeight: 900, margin: 0 }}>
               Message Logs
             </h2>
@@ -627,6 +629,7 @@ export default function MessagesPage() {
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </PremiumShell>
   );
 }
