@@ -37,7 +37,7 @@ type AttendanceStudent = {
   marked_at: string | null;
 };
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "http://192.168.1.18:30081";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];

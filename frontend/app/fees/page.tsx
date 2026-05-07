@@ -31,7 +31,7 @@ type StudentFee = {
   notes: string | null;
 };
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "http://192.168.1.18:30081";
 
 export default function FeesPage() {
   const [feeMonth, setFeeMonth] = useState(5);

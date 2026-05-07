@@ -40,7 +40,7 @@ type EnrollmentDetail = {
   created_at: string;
 };
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://192.168.1.18:30081";
 
 export default function EnrollmentsPage() {
   const [students, setStudents] = useState<Student[]>([]);

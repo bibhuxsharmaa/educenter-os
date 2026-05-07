@@ -4,9 +4,10 @@ metadata:
   name: backend
   namespace: educenter-os
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: backend
   ports:
     - port: 8000
       targetPort: 8000
+      nodePort: 30081
