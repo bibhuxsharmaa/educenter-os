@@ -1,0 +1,14 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: educenter-backend
+    ports:
+      - "8000:8000"
+    networks:
+      - backend_net
+
+networks:
+  backend_net:
+    driver: bridge
