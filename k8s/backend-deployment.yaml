@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: lakshaywalia666/educenter-os-backend:latest
+          image: bibhuxsharmaa/educenter-os-backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

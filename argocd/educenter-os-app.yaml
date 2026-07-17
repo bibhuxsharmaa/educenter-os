@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/lakshaywalia666/educenter-os.git
+    repoURL: https://github.com/bibhuxsharmaa/educenter-os.git
     targetRevision: main
     path: k8s
   destination:

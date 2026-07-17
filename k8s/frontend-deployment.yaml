@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: lakshaywalia666/educenter-os-frontend:latest
+          image: bibhuxsharmaa/educenter-os-frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
